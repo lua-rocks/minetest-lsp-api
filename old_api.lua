@@ -1,5 +1,4 @@
 ---@meta
----@diagnostic disable: duplicate-set-field
 -- luacheck: ignore
 
 -- Type definitions for Minetest API
@@ -250,7 +249,7 @@ function vector.rotate_around_axis(v1, v2, a) end
 ---@param direction Vector
 ---@param up? Vector
 ---@return Vector
-function vector.dir_to_rotation(direction, up)end
+function vector.dir_to_rotation(direction, up) end
 
 ---@class Vector2
 ---@field x number
@@ -513,14 +512,8 @@ function AreaStore:get_areas_for_pos(pos, include_borders, include_data) end
 ---@param include_borders boolean
 ---@param include_data boolean
 ---@return { min: Vector, max: Vector, data: string }[]
-function AreaStore:get_areas_in_area(
-  edge1,
-  edge2,
-  accept_overlap,
-  include_borders,
-  include_data
-)
-  return {}
+function AreaStore:get_areas_in_area(edge1, edge2, accept_overlap, include_borders, include_data)
+	return {}
 end
 
 ---@param edge1 Vector
@@ -829,13 +822,7 @@ function ObjectRef:move_to(pos, continuous) end
 ---@param time_from_last_punch any time since last punch action of the puncher
 ---@param tool_capabilities ToolCapabilities
 ---@param direction any Can be nil
-function ObjectRef:punch(
-  puncher,
-  time_from_last_punch,
-  tool_capabilities,
-  direction
-)
-end
+function ObjectRef:punch(puncher, time_from_last_punch, tool_capabilities, direction) end
 
 ---@param clicker ObjectRef
 function ObjectRef:right_click(clicker) end
@@ -873,13 +860,7 @@ function ObjectRef:get_armor_groups() end
 ---@param frame_speed number
 ---@param frame_blend number
 ---@param frame_loop boolean
-function ObjectRef:set_animation(
-  frame_range,
-  frame_speed,
-  frame_blend,
-  frame_loop
-)
-end
+function ObjectRef:set_animation(frame_range, frame_speed, frame_blend, frame_loop) end
 
 ---@return { x: number, y: number} range, number frame_speed, number frame_blend, boolean frame_loop
 function ObjectRef:get_animation() end
@@ -892,14 +873,7 @@ function ObjectRef:set_animation_frame_speed(frame_speed) end
 ---@param position? Vector
 ---@param rotation? Vector
 ---@param forced_visible? boolean
-function ObjectRef:set_attach(
-  parent,
-  bone,
-  position,
-  rotation,
-  forced_visible
-)
-end
+function ObjectRef:set_attach(parent, bone, position, rotation, forced_visible) end
 
 ---@return any parent, string bone, Vector position, Vector rotation, boolean forced_visible
 function ObjectRef:get_attach() end
@@ -969,13 +943,7 @@ function LuaObjectRef:get_texture_mod() end
 ---@param num_frames number Total frames in the tecture
 ---@param framelength number Time per animated frame in seconds
 ---@param select_x_by_camera boolean Only for visual = `sprite`. Changes the frame `x` position according to the view direction. default: `false`.
-function LuaObjectRef:set_sprite(
-  start_frame,
-  num_frames,
-  framelength,
-  select_x_by_camera
-)
-end
+function LuaObjectRef:set_sprite(start_frame, num_frames, framelength, select_x_by_camera) end
 
 ---@deprecated
 function LuaObjectRef:get_entity_name() end
@@ -1177,14 +1145,7 @@ function PlayerObjectRef:get_day_night_ratio() end
 ---@param dig  Vector2
 ---@param walk_while_dig Vector2
 ---@param frame_speed number
-function PlayerObjectRef:set_local_animation(
-  idle,
-  walk,
-  dig,
-  walk_while_dig,
-  frame_speed
-)
-end
+function PlayerObjectRef:set_local_animation(idle, walk, dig, walk_while_dig, frame_speed) end
 ---@return Vector2 idle, Vector2 walk, Vector2 dig, Vector2 walk_while_dig, number frame_speed
 function PlayerObjectRef:get_local_animation() end
 
@@ -1744,14 +1705,7 @@ function math.round(x) end
 ---@param str string
 ---@param separator string
 ---@param max_splits? boolean
-function string.split(
-  str,
-  separator,
-  include_empty,
-  max_splits,
-  sep_is_pattern
-)
-end
+function string.split(str, separator, include_empty, max_splits, sep_is_pattern) end
 
 ---@return string
 function string:trim() end
@@ -1822,12 +1776,8 @@ function minetest.get_dig_params(groups, tool_capabilities) end
 ---@param tool_capabilities ToolCapabilities
 ---@param time_from_last_punch? number
 ---@return { hp: number, wear?: number }
-function minetest.get_hit_params(
-  groups,
-  tool_capabilities,
-  time_from_last_punch
-)
-  return {}
+function minetest.get_hit_params(groups, tool_capabilities, time_from_last_punch)
+	return {}
 end
 
 -- ! Utilities
@@ -2039,8 +1989,16 @@ function minetest.register_schematic(schem) end
 ---@param distance number
 ---@param damage number
 ---@return number
-function minetest.calculate_knockback(player, hitter, time_from_last_punch,
-	tool_capabilities, dir, distance, damage) end
+function minetest.calculate_knockback(
+	player,
+	hitter,
+	time_from_last_punch,
+	tool_capabilities,
+	dir,
+	distance,
+	damage
+)
+end
 
 function minetest.clear_registered_biomes() end
 
@@ -2465,15 +2423,7 @@ function minetest.raycast(pos1, pos2, objects, liquids) end
 ---@param max_jump number
 ---@param max_drop number
 ---@param algorithm '"A*_noprefetch"'|'"A*"'|'"Dijkstra"'
-function minetest.find_path(
-  pos1,
-  pos2,
-  searchdistance,
-  max_jump,
-  max_drop,
-  algorithm
-)
-end
+function minetest.find_path(pos1, pos2, searchdistance, max_jump, max_drop, algorithm) end
 ---@param pos Vector
 ---@param treedef TreeDef
 function minetest.spawn_tree(pos, treedef) end
@@ -2539,14 +2489,8 @@ function minetest.remove_detached_inventory(name) end
 ---@param user any
 ---@param pointed_thing PointedThing
 ---@return ItemStack leftover
-function minetest.do_item_eat(
-  hp_change,
-  replace_with_item,
-  itemstack,
-  user,
-  pointed_thing
-)
-  return {}
+function minetest.do_item_eat(hp_change, replace_with_item, itemstack, user, pointed_thing)
+	return {}
 end
 
 -- ! Formspec
@@ -2672,14 +2616,8 @@ function minetest.rollback_revert_actions_by(actor, seconds) end
 ---@param param2? number
 ---@param prevent_after_place? boolean
 ---@return ItemStack, Vector | nil position
-function minetest.item_place_node(
-  itemstack,
-  placer,
-  pointed_thing,
-  param2,
-  prevent_after_place
-)
-  return {}
+function minetest.item_place_node(itemstack, placer, pointed_thing, param2, prevent_after_place)
+	return {}
 end
 ---@deprecated
 ---@param itemstack ItemStack
@@ -2806,14 +2744,7 @@ function minetest.kick_player(name, reason) end
 ---@param probability_list { pos: Vector, prob: integer }[]
 ---@param filename string
 ---@param slice_prob_list { ypos: integer, prob: integer }[]
-function minetest.create_schematic(
-  p1,
-  p2,
-  probability_list,
-  filename,
-  slice_prob_list
-)
-end
+function minetest.create_schematic(p1, p2, probability_list, filename, slice_prob_list) end
 
 ---@param pos Vector
 ---@param schematic string | SchematicDefn
@@ -2821,15 +2752,7 @@ end
 ---@param replacements table<string, string>
 ---@param force_placement boolean
 ---@param flags string
-function minetest.place_schematic(
-  pos,
-  schematic,
-  rotation,
-  replacements,
-  force_placement,
-  flags
-)
-end
+function minetest.place_schematic(pos, schematic, rotation, replacements, force_placement, flags) end
 
 ---@param vmanip VoxelManip
 ---@param pos Vector
@@ -2838,16 +2761,7 @@ end
 ---@param replacements table<string, string>
 ---@param force_placement boolean
 ---@param flags string
-function minetest.place_schematic_on_vmanip(
-  vmanip,
-  pos,
-  schematic,
-  rotation,
-  replacements,
-  force_placement,
-  flags
-)
-end
+function minetest.place_schematic_on_vmanip(vmanip, pos, schematic, rotation, replacements, force_placement, flags) end
 
 ---@param schematic string | SchematicDefn
 ---@param format '"mts"'|'"lua"'
@@ -2985,15 +2899,8 @@ function minetest.is_area_protected(pos1, pos2, player_name, interval) end
 ---@param orient_flags { invert_wall?: boolean, force_wall?: boolean, force_ceiling?: boolean, force_floor?: boolean, force_facedir?: boolean }
 ---@param prevent_after_place boolean
 ---@return ItemStack
-function minetest.rotate_and_place(
-  itemstack,
-  placer,
-  pointed_thing,
-  infinitestacks,
-  orient_flags,
-  prevent_after_place
-)
-  return {}
+function minetest.rotate_and_place(itemstack, placer, pointed_thing, infinitestacks, orient_flags, prevent_after_place)
+	return {}
 end
 
 ---@param itemstack ItemStack
