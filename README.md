@@ -1,4 +1,4 @@
-# Minetest Game LSP API
+# Minetest Game LSP API (WIP)
 
 The [LSP API] not only makes development much more pleasant but also helps to
 detect serious bugs, so I hope that when everything is ready, it will become the
