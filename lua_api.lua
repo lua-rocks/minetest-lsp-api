@@ -1011,6 +1011,8 @@ function minetest.sound_fade(handle, step, gain) end
 ---
 ---    local def = minetest.registered_nodes[nodename]
 ---    local drawtype = def and def.drawtype
+---@param name string
+---@param definition mt.node
 function minetest.register_node(name, definition) end
 
 minetest.registered_nodes = {}
@@ -1025,8 +1027,6 @@ minetest.registered_nodes = {}
 ---The definition of a node is stored and can be accessed by using
 ---
 ---    minetest.registered_nodes[node.name]
----
----See [Registered definitions].
 ---
 ---Nodes are passed by value between Lua and the engine.
 ---They are represented by a table:
