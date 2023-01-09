@@ -438,7 +438,7 @@ function minetest.register_alias_force(alias, original_name) end
 ---Supported texture formats are PNG (`.png`), JPEG (`.jpg`), Bitmap (`.bmp`)
 ---and Targa (`.tga`).
 ---Since better alternatives exist, the latter two may be removed in the future.
----
+
 ---Texture modifiers
 --------------------
 ---
@@ -671,7 +671,8 @@ function minetest.register_alias_force(alias, original_name) end
 ---In particular consider `minetest.dynamic_add_media` and test whether
 ---using other texture modifiers could result in a shorter string than
 ---embedding a whole image, this may vary by use case.
----
+---@alias mt.texture_string string
+
 ---Hardware coloring
 --------------------
 ---
@@ -10246,60 +10247,55 @@ end
 ---In versions before v5.6.0, particlespawner textures could only be specified as a single
 ---texture string. After v5.6.0, textures can now be specified as a table as well. This
 ---table contains options that allow simple animations to be applied to the texture.
----@class mt.texture
----@field alpha number
-local texture = {
-	-- the texture specification string
-	name = "mymod_particle_texture.png",
-}
+---@class mt.texture_table
+---@field name string The texture specification string.
+---@field scale number|{x:number, y:number} Scales the texture onscreen.
+local texture = {}
 
----    texture = {
----        alpha = 1.0,
----        -- controls how visible the particle is; at 1.0 the particle is fully
----        -- visible, at 0, it is completely invisible.
----
----        alpha_tween = {1, 0},
----        -- can be used instead of `alpha` to animate the alpha value over the
----        -- particle's lifetime. these tween tables work identically to the tween
----        -- tables used in particlespawner properties, except that time references
----        -- are understood with respect to the particle's lifetime, not the
----        -- spawner's. {1,0} fades the particle out over its lifetime.
----
----        scale = 1,
----        scale = {x = 1, y = 1},
----        -- scales the texture onscreen
----
----        scale_tween = {
----            {x = 1, y = 1},
----            {x = 0, y = 1},
----        },
----        -- animates the scale over the particle's lifetime. works like the
----        -- alpha_tween table, but can accept two-dimensional vectors as well as
----        -- integer values. the example value would cause the particle to shrink
----        -- in one dimension over the course of its life until it disappears
----
----        blend = "alpha",
----        -- (default) blends transparent pixels with those they are drawn atop
----        -- according to the alpha channel of the source texture. useful for
----        -- e.g. material objects like rocks, dirt, smoke, or node chunks
----        blend = "add",
----        -- adds the value of pixels to those underneath them, modulo the sources
----        -- alpha channel. useful for e.g. bright light effects like sparks or fire
----        blend = "screen",
----        -- like "add" but less bright. useful for subtler light effects. note that
----        -- this is NOT formally equivalent to the "screen" effect used in image
----        -- editors and compositors, as it does not respect the alpha channel of
----        -- of the image being blended
----        blend = "sub",
----        -- the inverse of "add"; the value of the source pixel is subtracted from
----        -- the pixel underneath it. a white pixel will turn whatever is underneath
----        -- it black; a black pixel will be "transparent". useful for creating
----        -- darkening effects
----
----        animation = {Tile Animation definition},
----        -- overrides the particlespawner's global animation property for a single
----        -- specific texture
----    }
+-- Controls how visible the particle is; at 1.0 the particle is fully
+-- visible, at 0, it is completely invisible.
+---@type number
+texture.alpha = nil
+
+-- Can be used instead of `alpha` to animate the alpha value over the
+-- particle's lifetime. these tween tables work identically to the tween
+-- tables used in particlespawner properties, except that time references
+-- are understood with respect to the particle's lifetime, not the
+-- spawner's. {1,0} fades the particle out over its lifetime.
+---@type {[1]:number, [2]:number}
+texture.alpha_tween = nil
+
+-- Animates the scale over the particle's lifetime. works like the
+-- alpha_tween table, but can accept two-dimensional vectors as well as
+-- integer values. the example value would cause the particle to shrink
+-- in one dimension over the course of its life until it disappears
+---@type {x:number, y:number}[]
+texture.scale_tween = nil
+
+---@type nil
+-- (default) Blends transparent pixels with those they are drawn atop
+-- according to the alpha channel of the source texture. useful for
+-- e.g. material objects like rocks, dirt, smoke, or node chunks.
+---|"alpha"
+-- Adds the value of pixels to those underneath them, modulo the sources
+-- alpha channel. useful for e.g. bright light effects like sparks or fire.
+---|"add"
+-- Like "add" but less bright. useful for subtler light effects. note that
+-- this is NOT formally equivalent to the "screen" effect used in image
+-- editors and compositors, as it does not respect the alpha channel of
+-- of the image being blended.
+---|"screen"
+-- The inverse of "add"; the value of the source pixel is subtracted from
+-- the pixel underneath it. a white pixel will turn whatever is underneath
+-- it black; a black pixel will be "transparent". useful for creating
+-- darkening effects.
+---|"sub"
+texture.blend = nil
+
+-- Overrides the particlespawner's global animation property for a single
+-- specific texture.
+---@type table
+texture.animation = nil
 
 ---Instead of setting a single texture definition, it is also possible to set a
 ---`texpool` property. A `texpool` consists of a list of possible particle textures.
