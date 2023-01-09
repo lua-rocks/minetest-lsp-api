@@ -2635,7 +2635,7 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 ---* `middle` (optional): Makes the image render in 9-sliced mode and defines the middle rect.
 ---* Requires formspec version >= 6.
 ---* See `background9[]` documentation for more information.
----|"animated_image[<X>,<Y>;<W>,<H>;<name>;<texture name>;<frame count>;<frame duration>;<frame start> <middle>]"
+---|"animated_image[<X>,<Y>;<W>,<H>;<name>;<texture name>;<frame count>;<frame duration>;<frame start><middle>]"
 ---* Show a mesh model.
 ---* `name`: Element name that can be used for styling
 ---* `mesh`: The mesh model to use.
@@ -2788,7 +2788,7 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 ---* `true`/`false`: draw transparent background
 ---* See also `minetest.explode_textlist_event`
 ---  (main menu: `core.explode_textlist_event`).
----|"textlist[<X>,<Y>;<W>,<H>;<name>;<listelem 1>,<listelem 2>,...,<listelem n>;<selected idx>;---<transparent>]"
+---|"textlist[<X>,<Y>;<W>,<H>;<name>;<listelem 1>,<listelem 2>,...,<listelem n>;<selected idx>;<transparent>]"
 ---* Show a tab**header** at specific position (ignores formsize)
 ---* `X` and `Y`: position of the tabheader
 ---* *Note*: Width and height are automatically chosen with this syntax
@@ -2797,7 +2797,7 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 ---* `current_tab`: index of selected tab 1...
 ---* `transparent` (optional): if true, tabs are semi-transparent
 ---* `draw_border` (optional): if true, draw a thin line at tab base
----|"tabheader[<X>,<Y>;<name>;<caption 1>,<caption 2>,...,<caption n>;<current_tab>;<transparent>;---<draw_border>]"
+---|"tabheader[<X>,<Y>;<name>;<caption 1>,<caption 2>,...,<caption n>;<current_tab>;<transparent>;<draw_border>]"
 ---* Show a tab**header** at specific position (ignores formsize)
 ---* **Important note**: This syntax for tabheaders can only be used with the
 ---  new coordinate system.
@@ -2808,7 +2808,7 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 ---* `current_tab`: index of selected tab 1...
 ---* `transparent` (optional): show transparent
 ---* `draw_border` (optional): draw border
----|"tabheader[<X>,<Y>;<H>;<name>;<caption 1>,<caption 2>,...,<caption n>;<current_tab>;<transparent>;---<draw_border>]"
+---|"tabheader[<X>,<Y>;<H>;<name>;<caption 1>,<caption 2>,...,<caption n>;<current_tab>;<transparent>;<draw_border>]"
 ---* Show a tab**header** at specific position (ignores formsize)
 ---* **Important note**: This syntax for tabheaders can only be used with the
 ---  new coordinate system.
@@ -2819,7 +2819,7 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 ---* `current_tab`: index of selected tab 1...
 ---* `transparent` (optional): show transparent
 ---* `draw_border` (optional): draw border
----|"tabheader[<X>,<Y>;<W>,<H>;<name>;<caption 1>,<caption 2>,...,<caption n>;<current_tab>;---<transparent>;<draw_border>]"
+---|"tabheader[<X>,<Y>;<W>,<H>;<name>;<caption 1>,<caption 2>,...,<caption n>;<current_tab>;<transparent>;<draw_border>]"
 ---* Simple colored box
 ---* `color` is color specified as a `ColorString`.
 ---  If the alpha component is left blank, the box will be semitransparent.
