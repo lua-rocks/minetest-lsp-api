@@ -30,6 +30,9 @@ here, see there" which are completely irrelevant in LSP.
 Also, I try to start all sentences in all comments with a capital letter and end
 with a period.
 
+Otherwise, I try not to make huge edits to the documentation, so that all the
+changes from the original .txt file is easy to update in .lua file.
+
 [lsp api]: https://github.com/sumneko/lua-language-server
 [lsp format]: https://github.com/sumneko/lua-language-server/wiki/Annotations
 [minetest]: https://github.com/minetest/minetest/tree/master/doc
