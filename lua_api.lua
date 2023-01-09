@@ -3156,7 +3156,7 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 ---* textarea
 ---* scrollbar
 ---|"set_focus[<name>;<force>]"
----
+
 ---Migrating to Real Coordinates
 --------------------------------
 ---
