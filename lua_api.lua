@@ -2284,13 +2284,13 @@ tool_capabilities.damage_groups = nil
 
 ---Metadata
 ---========
----
+
 ---Node Metadata
 ----------------
----
+
 ---The instance of a node in the world normally only contains the three values
 ---mentioned in [Nodes]. However, it is possible to insert extra data into a node.
----It is called "node metadata"; See `NodeMetaRef`.
+---It is called "node metadata" and can be obtained via `minetest.get_meta(pos)`.
 ---
 ---Node metadata contains two things:
 ---
@@ -2308,32 +2308,47 @@ tool_capabilities.damage_groups = nil
 ---
 ---Example:
 ---
----    local meta = minetest.get_meta(pos)
----    meta:set_string("formspec",
----            "size[8,9]"..
----            "list[context;main;0,0;8,4;]"..
----            "list[current_player;main;0,5;8,4;]")
----    meta:set_string("infotext", "Chest");
----    local inv = meta:get_inventory()
----    inv:set_size("main", 8*4)
----    print(dump(meta:to_table()))
----    meta:from_table({
----        inventory = {
----            main = {[1] = "default:dirt", [2] = "", [3] = "", [4] = "",
----                    [5] = "", [6] = "", [7] = "", [8] = "", [9] = "",
----                    [10] = "", [11] = "", [12] = "", [13] = "",
----                    [14] = "default:cobble", [15] = "", [16] = "", [17] = "",
----                    [18] = "", [19] = "", [20] = "default:cobble", [21] = "",
----                    [22] = "", [23] = "", [24] = "", [25] = "", [26] = "",
----                    [27] = "", [28] = "", [29] = "", [30] = "", [31] = "",
----                    [32] = ""}
----        },
----        fields = {
----            formspec = "size[8,9]list[context;main;0,0;8,4;]list[current_player;main;0,5;8,4;]",
----            infotext = "Chest"
----        }
----    })
----
+---```lua
+---local meta = minetest.get_meta(pos)
+---local f = "size[8,9]"..
+---  "list[context;main;0,0;8,4;]"..
+---  "list[current_player;main;0,5;8,4;]"
+---meta:set_string("formspec", f)
+---meta:set_string("infotext", "Chest");
+---local inv = meta:get_inventory()
+---inv:set_size("main", 8*4)
+---print(dump(meta:to_table()))
+---meta:from_table({
+---  inventory = {
+---    main = {[1] = "default:dirt", [2] = "", [3] = "", [4] = ""}
+---  },
+---  fields = {
+---    formspec = f
+---    infotext = "Chest"
+---  }
+---})
+---```
+---@class mt.NodeMetaRef : mt.MetaDataRef
+local NodeMetaRef = {}
+
+---Get node metadata from the position.
+---@param pos mt.vector|mt.SimpleVector
+---@return mt.NodeMetaRef
+function minetest.get_meta(pos) end
+
+---### Methods
+
+---@return mt.InvRef
+function NodeMetaRef:get_inventory() end
+
+---* Mark specific vars as private
+---  This will prevent them from being sent to the client. Note that the "private"
+---  status will only be remembered if an associated key-value pair exists,
+---  meaning it's best to call this when initializing all other meta (e.g.
+---  `on_construct`).
+---@param name string|string[]
+function NodeMetaRef:mark_as_private(name) end
+
 ---Item Metadata
 ----------------
 ---
@@ -5812,8 +5827,6 @@ end
 ---* `minetest.find_nodes_with_meta(pos1, pos2)`
 ---* Get a table of positions of nodes that have metadata within a region
 ---      {pos1, pos2}.
----* `minetest.get_meta(pos)`
----* Get a `NodeMetaRef` at that position
 ---* `minetest.get_node_timer(pos)`
 ---* Get `NodeTimerRef`
 ---
@@ -7363,21 +7376,6 @@ local MetaDataRef = {}
 ---* If mod channel is not writeable or invalid, message will be dropped.
 ---* Message size is limited to 65535 characters by protocol.
 ---
----`NodeMetaRef`
-----------------
----
----Node metadata: reference extra data and functionality stored in a node.
----Can be obtained via `minetest.get_meta(pos)`.
----
----### Methods
----
----* All methods in MetaDataRef
----* `get_inventory()`: returns `InvRef`
----* `mark_as_private(name or {name1, name2, ...})`: Mark specific vars as private
----  This will prevent them from being sent to the client. Note that the "private"
----  status will only be remembered if an associated key-value pair exists,
----  meaning it's best to call this when initializing all other meta (e.g.
----  `on_construct`).
 ---
 ---`NodeTimerRef`
 -----------------
