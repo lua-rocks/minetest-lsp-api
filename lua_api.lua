@@ -2635,7 +2635,7 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 ---* `middle` (optional): Makes the image render in 9-sliced mode and defines the middle rect.
 ---* Requires formspec version >= 6.
 ---* See `background9[]` documentation for more information.
----|"animated_image[<X>,<Y>;<W>,<H>;<name>;<texture name>;<frame count>;<frame duration>;<frame start>;---<middle>]"
+---|"animated_image[<X>,<Y>;<W>,<H>;<name>;<texture name>;<frame count>;<frame duration>;<frame start> <middle>]"
 ---* Show a mesh model.
 ---* `name`: Element name that can be used for styling
 ---* `mesh`: The mesh model to use.
@@ -2649,7 +2649,7 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 ---* Defaults to the full range of all available frames.
 ---* Syntax: `<begin>,<end>`
 ---* `animation speed` (Optional): Sets the animation speed. Default 0 FPS.
----|"model[<X>,<Y>;<W>,<H>;<name>;<mesh>;<textures>;<rotation X,Y>;<continuous>;<mouse control>;<frame ---loop range>;<animation speed>]"
+---|"model[<X>,<Y>;<W>,<H>;<name>;<mesh>;<textures>;<rotation X,Y>;<continuous>;<mouse control>;<frame loop range>;<animation speed>]"
 ---* Show an inventory image of registered item/node
 ---|"item_image[<X>,<Y>;<W>,<H>;<item name>]"
 ---* Sets background color of formspec.
@@ -2761,7 +2761,7 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 ---  formsize.
 ---* `drawborder`: draw button border or not
 ---* `pressed texture name` is the filename of an image on pressed state
----|"image_button[<X>,<Y>;<W>,<H>;<texture name>;<name>;<label>;<noclip>;<drawborder>;<pressed texture ---name>]"
+---|"image_button[<X>,<Y>;<W>,<H>;<texture name>;<name>;<label>;<noclip>;<drawborder>;<pressed texture name>]"
 ---* `item name` is the registered name of an item/node
 ---* The item description will be used as the tooltip. This can be overridden with
 ---  a tooltip element.
@@ -3023,17 +3023,9 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 ---* textarea
 ---* scrollbar
 ---|"set_focus[<name>;<force>]"
----|""
----|""
----|""
----|""
----|""
----|""
----|""
----|""
 
 ---@type mt.formspec
-local formspec = "st"
+local formspec = ""
 
 ---
 ---Migrating to Real Coordinates
