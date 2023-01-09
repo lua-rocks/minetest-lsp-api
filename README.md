@@ -4,6 +4,11 @@ The [LSP API] not only makes development much more pleasant but also helps to
 detect serious bugs, so I hope that when everything is ready, it will become the
 standard for Minetest devs and modders.
 
+## Usage
+
+Move API definitions from this repository to your minetest game project and
+enjoy smart tooltips in a text editor [that supports the LSP].
+
 ## Goals
 
 - [ ] Transfer here all the docs from [Minetest] in [LSP format]
@@ -30,3 +35,5 @@ with a period.
 [minetest]: https://github.com/minetest/minetest/tree/master/doc
 [minetest game]: https://github.com/minetest/minetest_game
 [mineclone2]: https://github.com/MineClone2/MineClone2
+[that supports the lsp]:
+  https://microsoft.github.io/language-server-protocol/implementors/tools
