@@ -904,57 +904,7 @@ function minetest.register_alias(alias, original_name) end
 ---* `foomod_foosound.1.ogg`
 ---* (...)
 ---* `foomod_foosound.9.ogg`
----
----Examples of sound parameter tables:
----
----    -- Play locationless on all clients
----    {
----        gain = 1.0,   -- default
----        fade = 0.0,   -- default, change to a value > 0 to fade the sound in
----        pitch = 1.0,  -- default
----    }
----    -- Play locationless to one player
----    {
----        to_player = name,
----        gain = 1.0,   -- default
----        fade = 0.0,   -- default, change to a value > 0 to fade the sound in
----        pitch = 1.0,  -- default
----    }
----    -- Play locationless to one player, looped
----    {
----        to_player = name,
----        gain = 1.0,  -- default
----        loop = true,
----    }
----    -- Play at a location
----    {
----        pos = {x = 1, y = 2, z = 3},
----        gain = 1.0,  -- default
----        max_hear_distance = 32,  -- default, uses a Euclidean metric
----    }
----    -- Play connected to an object, looped
----    {
----        object = <an ObjectRef>,
----        gain = 1.0,  -- default
----        max_hear_distance = 32,  -- default, uses a Euclidean metric
----        loop = true,
----    }
----    -- Play at a location, heard by anyone *but* the given player
----    {
----        pos = {x = 32, y = 0, z = 100},
----        max_hear_distance = 40,
----        exclude_player = name,
----    }
----
----Looped sounds must either be connected to an object or played locationless to
----one player using `to_player = name`.
----
----A positional sound will only be heard by players that are within
----`max_hear_distance` of the sound position, at the start of the sound.
----
----`exclude_player = name` can be applied to locationless, positional and object-
----bound sounds to exclude a single player from hearing them.
----
+
 ---`SimpleSoundSpec`
 --------------------
 
@@ -980,7 +930,53 @@ function minetest.register_alias(alias, original_name) end
 ---* `{name = "default_place_node"}`: Same as above
 ---* `{name = "default_place_node", gain = 0.5}`: 50% volume
 ---* `{name = "default_place_node", gain = 0.9, pitch = 1.1}`: 90% volume, 110% pitch
----@alias mt.SimpleSoundSpec {name: string|nil, gain: number|nil, pitch:number|nil}|string
+---
+---@class mt.sound_spec
+---@field name string|nil
+---@field gain number|nil
+---@field pitch number|nil
+local sound_spec = {}
+
+---@alias mt.SimpleSoundSpec mt.sound_spec|string
+
+---Looped sounds must either be connected to an object or played locationless to
+---one player using `to_player = name`.
+---
+---A positional sound will only be heard by players that are within
+---`max_hear_distance` of the sound position, at the start of the sound.
+---
+---`exclude_player = name` can be applied to locationless, positional and object-
+---bound sounds to exclude a single player from hearing them.
+---@class mt.sound_parameters
+---@field gain number|nil `1.0`
+---@field pitch number|nil `1.0`
+---@field fade number|nil `0.0` Change to a value > 0 to fade the sound in.
+---@field to_player string|nil Name.
+---@field exclude_player string|nil Name.
+---@field loop boolean|nil
+---@field pos mt.vector|mt.SimpleVector|nil
+---@field max_hear_distance number|nil `32`
+---@field object mt.ObjectRef|nil
+local sound_parameters = {}
+
+---* `parameters` is a sound parameter table
+---@param spec mt.SimpleSoundSpec
+---@param parameters table
+--- `false`
+--- Ephemeral sounds will not return a handle and can't be stopped or faded.
+--- It is recommend to use this for short sounds that happen in response to
+--- player actions (e.g. door closing).
+---@param ephemeral boolean|nil
+---@return unknown handle
+function minetest.sound_play(spec, parameters, ephemeral) end
+
+---@param handle unknown
+function minetest.sound_stop(handle) end
+
+---@param handle unknown
+---@param step number
+---@param gain number
+function minetest.sound_fade(handle, step, gain) end
 
 ---Special sound files
 ----------------------
@@ -4006,13 +4002,8 @@ function minetest.get_dig_params(groups, tool_capabilities, wear) end
 ---@param time_from_last_punch number|nil Time in seconds since last punch action.
 ---@param wear number|nil `0` Amount of wear the item starts with.
 ---@return mt.hit_params
-function minetest.get_hit_params(
-  groups,
-  tool_capabilities,
-  time_from_last_punch,
-  wear
-)
-  return {}
+function minetest.get_hit_params(groups, tool_capabilities, time_from_last_punch, wear)
+	return {}
 end
 
 ---
@@ -6335,28 +6326,6 @@ end
 ---* Checks if node can be dug, puts item into inventory, removes node
 ---* Calls functions registered by `minetest.registered_on_dignodes()`
 ---
----Sounds
----------
----
----* `minetest.sound_play(spec, parameters, [ephemeral])`: returns a handle
----* `spec` is a `SimpleSoundSpec`
----* `parameters` is a sound parameter table
----* `ephemeral` is a boolean (default: false)
----      Ephemeral sounds will not return a handle and can't be stopped or faded.
----      It is recommend to use this for short sounds that happen in response to
----      player actions (e.g. door closing).
----* `minetest.sound_stop(handle)`
----* `handle` is a handle returned by `minetest.sound_play`
----* `minetest.sound_fade(handle, step, gain)`
----* `handle` is a handle returned by `minetest.sound_play`
----* `step` determines how fast a sound will fade.
----      The gain will change by this much per second,
----      until it reaches the target gain.
----      Note: Older versions used a signed step. This is deprecated, but old
----      code will still work. (the client uses abs(step) to correct it)
----* `gain` the target gain for the fade.
----      Fading to zero will delete the sound.
----
 ---Timing
 ---------
 ---
@@ -7509,13 +7478,7 @@ function ObjectRef:move_to(pos, continuous) end
 ---@param time_from_last_punch number|nil Time since last punch action.
 ---@param tool_capabilities mt.tool_capabilities|nil
 ---@param direction mt.vector|nil
-function ObjectRef:punch(
-  puncher,
-  time_from_last_punch,
-  tool_capabilities,
-  direction
-)
-end
+function ObjectRef:punch(puncher, time_from_last_punch, tool_capabilities, direction) end
 
 ---@param clicker mt.ObjectRef
 function ObjectRef:right_click(clicker) end
@@ -7562,13 +7525,7 @@ function ObjectRef:get_armor_groups() end
 ---@param frame_speed number|nil `15.0`
 ---@param frame_blend number|nil `0.0`
 ---@param frame_loop boolean|nil `true`
-function ObjectRef:set_animation(
-  frame_range,
-  frame_speed,
-  frame_blend,
-  frame_loop
-)
-end
+function ObjectRef:set_animation(frame_range, frame_speed, frame_blend, frame_loop) end
 
 ---@return { x: number, y: number} range
 ---@return number frame_speed
@@ -7584,14 +7541,7 @@ function ObjectRef:set_animation_frame_speed(frame_speed) end
 ---@param position mt.vector|nil `{x=0, y=0, z=0}` Relative position.
 ---@param rotation mt.vector|nil `{x=0, y=0, z=0}` Relative rotation in degrees.
 ---@param forced_visible boolean|nil `false` Should appear in first person?
-function ObjectRef:set_attach(
-  parent,
-  bone,
-  position,
-  rotation,
-  forced_visible
-)
-end
+function ObjectRef:set_attach(parent, bone, position, rotation, forced_visible) end
 
 ---* This command may fail silently (do nothing) when it would result
 ---  in circular attachments.
@@ -7701,13 +7651,7 @@ function LuaObjectRef:get_texture_mod() end
 ---@param num_frames number|nil `1` Total frames in the tecture.
 ---@param framelength number|nil `0.2` Time per animated frame in seconds.
 ---@param select_x_by_camera boolean|nil `false` Only for visual = `sprite`. Changes the frame `x` position according to the view direction.
-function LuaObjectRef:set_sprite(
-  start_frame,
-  num_frames,
-  framelength,
-  select_x_by_camera
-)
-end
+function LuaObjectRef:set_sprite(start_frame, num_frames, framelength, select_x_by_camera) end
 
 ---* **Deprecated**: Use the field `self.name` instead.
 ---@deprecated
@@ -8097,14 +8041,7 @@ function PlayerObjectRef:get_day_night_ratio() end
 ---@param dig  {x:number, y:number}|nil
 ---@param walk_while_dig {x:number, y:number}|nil
 ---@param frame_speed number|nil `30`
-function PlayerObjectRef:set_local_animation(
-  idle,
-  walk,
-  dig,
-  walk_while_dig,
-  frame_speed
-)
-end
+function PlayerObjectRef:set_local_animation(idle, walk, dig, walk_while_dig, frame_speed) end
 
 --- Returns idle, walk, dig, walk_while_dig tables and `frame_speed`.
 ---@return {x:number, y:number}|nil idle
@@ -10054,16 +9991,7 @@ function InvRef.on_put(inv, listname, index, stack, player) end
 ---@param to_index integer
 ---@param count integer
 ---@param player mt.PlayerObjectRef
-function InvRef.on_move(
-  inv,
-  from_list,
-  from_index,
-  to_list,
-  to_index,
-  count,
-  player
-)
-end
+function InvRef.on_move(inv, from_list, from_index, to_list, to_index, count, player) end
 
 ---* Detached inventory callback.
 ---* Called when a player wants to take something out of the inventory.
@@ -10076,7 +10004,7 @@ end
 ---@param player mt.PlayerObjectRef
 ---@return number
 function InvRef.allow_take(inv, listname, index, stack, player)
-  return 0
+	return 0
 end
 
 ---* Detached inventory callback.
@@ -10090,7 +10018,7 @@ end
 ---@param player mt.PlayerObjectRef
 ---@return number
 function InvRef.allow_put(inv, listname, index, stack, player)
-  return 0
+	return 0
 end
 
 ---* Detached inventory callback.
@@ -10104,16 +10032,8 @@ end
 ---@param count integer
 ---@param player mt.PlayerObjectRef
 ---@return number
-function InvRef.allow_move(
-  inv,
-  from_list,
-  from_index,
-  to_list,
-  to_index,
-  count,
-  player
-)
-  return 0
+function InvRef.allow_move(inv, from_list, from_index, to_list, to_index, count, player)
+	return 0
 end
 
 ---Particle definition
@@ -10463,8 +10383,8 @@ end
 ---@class mt.texture
 ---@field alpha number
 local texture = {
-  -- the texture specification string
-  name = "mymod_particle_texture.png",
+	-- the texture specification string
+	name = "mymod_particle_texture.png",
 }
 
 ---    texture = {
@@ -10583,8 +10503,7 @@ HTTPRequest.data = nil
 -- * You must make sure that the header strings follow
 --   HTTP specification ("Key: Value").
 ---@type table|nil
-HTTPRequest.extra_headers =
-  { "Accept-Language: en-us", "Accept-Charset: utf-8" }
+HTTPRequest.extra_headers = { "Accept-Language: en-us", "Accept-Charset: utf-8" }
 
 -- `false`
 -- * If true performs a multipart HTTP request.
