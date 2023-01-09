@@ -2351,8 +2351,8 @@ function NodeMetaRef:mark_as_private(name) end
 
 ---Item Metadata
 ----------------
----
----Item stacks can store metadata too. See [`ItemStackMetaRef`].
+
+---Item stacks can store metadata too.
 ---
 ---Item metadata only contains a key-value store.
 ---
@@ -2395,8 +2395,21 @@ function NodeMetaRef:mark_as_private(name) end
 ---
 ---    print(ItemStack("mod:item_with_no_desc"):get_description()) --> mod:item_with_no_desc
 ---
----
----
+---ItemStack metadata: reference extra data and functionality stored in a stack.
+---Can be obtained via `item:get_meta()`.
+---@class mt.ItemStackMetaRef : mt.MetaDataRef
+local ItemStackMetaRef = {}
+
+---@return mt.ItemStackMetaRef
+function ItemStack:get_meta() end
+
+---### Methods
+
+---* Overrides the item's tool capabilities
+---* A nil value will clear the override data and restore the original behavior.
+---@param tool_capabilities mt.tool_capabilities|nil
+function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
+
 ---Formspec
 ---========
 ---
@@ -7186,9 +7199,6 @@ function ItemStack:get_wear() end
 ---@return boolean cleared
 function ItemStack:set_wear(wear) end
 
----@return mt.ItemStackMetaRef
-function ItemStack:get_meta() end
-
 ---* **DEPRECATED** Returns metadata (a string attached to an item stack).
 ---@return string
 ---@deprecated
@@ -7296,21 +7306,6 @@ function ItemStack:peek_item(n) end
 ---  "equivalent".
 ---@param other mt.ItemStack
 function ItemStack:equals(other) end
-
----`ItemStackMetaRef`
----------------------
-
----ItemStack metadata: reference extra data and functionality stored in a stack.
----Can be obtained via `item:get_meta()`.
----@class mt.ItemStackMetaRef : mt.MetaDataRef
-local ItemStackMetaRef = {}
-
----### Methods
-
----* Overrides the item's tool capabilities
----* A nil value will clear the override data and restore the original behavior.
----@param tool_capabilities mt.tool_capabilities|nil
-function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 
 ---`MetaDataRef`
 ----------------
@@ -9176,8 +9171,7 @@ tool_capabilities.punch_attack_uses = nil
 ---        -- becoming detached.
 ---        -- oldmeta are the metadata fields (table) of the node before deletion.
 ---        -- drops is a table of ItemStacks, so any metadata to be preserved can
----        -- be added directly to one or more of the dropped items. See
----        -- "ItemStackMetaRef".
+---        -- be added directly to one or more of the dropped items.
 ---        -- default: nil
 ---
 ---        after_place_node = function(pos, placer, itemstack, pointed_thing),
