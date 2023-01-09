@@ -315,14 +315,17 @@ minetest = {}
 ---
 ---Aliases
 ---=======
----
+
 ---Aliases of itemnames can be added by using
 ---`minetest.register_alias(alias, original_name)` or
 ---`minetest.register_alias_force(alias, original_name)`.
 ---
 ---This adds an alias `alias` for the item called `original_name`.
 ---From now on, you can use `alias` to refer to the item `original_name`.
----
+---@param alias string
+---@param original_name string
+function minetest.register_alias(alias, original_name) end
+
 ---The only difference between `minetest.register_alias` and
 ---`minetest.register_alias_force` is that if an item named `alias` already exists,
 ---`minetest.register_alias` will do nothing while
@@ -5377,7 +5380,6 @@ end
 ---* `minetest.register_entity(name, entity definition)`
 ---* `minetest.register_abm(abm definition)`
 ---* `minetest.register_lbm(lbm definition)`
----* `minetest.register_alias(alias, original_name)`
 ---* Also use this to set the 'mapgen aliases' needed in a game for the core
 ---      mapgens. See [Mapgen aliases] section above.
 ---* `minetest.register_alias_force(alias, original_name)`
