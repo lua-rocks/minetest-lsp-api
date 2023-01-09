@@ -3188,9 +3188,9 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 -- | Element |  Position  |  Size   | Notes
 -- |---------|------------|---------|-------
 -- | box     | +0.3, +0.1 | 0, -0.4 |
--- | button  |            |         | Buttons now support height, so set h = 2 * 15/13 * 0.35, and ---reposition if h ~= 15/13 * 0.35 before
--- | list    |            |         | Spacing is now 0.25 for both directions, meaning lists will be ---taller in height
--- | label   | 0, +0.3    |         | The first line of text is now positioned centered exactly at the ---position specified
+-- | button  |            |         | Buttons now support height, so set h = 2 * 15/13 * 0.35, and reposition if h ~= 15/13 * 0.35 before
+-- | list    |            |         | Spacing is now 0.25 for both directions, meaning lists will be taller in height
+-- | label   | 0, +0.3    |         | The first line of text is now positioned centered exactly at the position specified
 
 ---@type mt.formspec
 local test = "checkbox[<X>,<Y>;<name>;<label>;<selected>]"
