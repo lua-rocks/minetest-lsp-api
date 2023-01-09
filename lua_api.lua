@@ -1051,7 +1051,6 @@ local node = {}
 ---The function of `param1` is determined by `paramtype` in node definition.
 ---`param1` is reserved for the engine when `paramtype != "none"`.
 ---@alias mt.paramtype
----|"light"
 ---* The value stores light with and without sun in its lower and upper 4 bits
 ---  respectively.
 ---* Required by a light source node to enable spreading its light.
@@ -1066,9 +1065,10 @@ local node = {}
 ---  * mesh
 ---  * plantlike
 ---  * plantlike_rooted
----|"none"
+---|"light"
 ---* `param1` will not be used by the engine and can be used to store
 ---  an arbitrary value
+---|"none"
 
 ---The function of `param2` is determined by `paramtype2` in node definition.
 ---`param2` is reserved for the engine when `paramtype2 != "none"`.
@@ -1198,18 +1198,17 @@ local node = {}
 ---`*_optional` drawtypes need less rendering time if deactivated.
 ---(always client-side).
 ---@alias mt.drawtype string
----|"normal"
 ---* A node-sized cube.
----|"airlike"
+---|"normal"
 ---* Invisible, uses no texture.
----|"liquid"
+---|"airlike"
 ---* The cubic source node for a liquid.
 ---* Faces bordering to the same node are never rendered.
 ---* Connects to node specified in `liquid_alternative_flowing`.
 ---* You *must* set `liquid_alternative_source` to the node's own name.
 ---* Use `backface_culling = false` for the tiles you want to make
 ---  visible when inside the node.
----|"flowingliquid"
+---|"liquid"
 ---* The flowing version of a liquid, appears with various heights and slopes.
 ---* Faces bordering to the same node are never rendered.
 ---* Connects to node specified in `liquid_alternative_source`.
@@ -1220,10 +1219,10 @@ local node = {}
 ---* `tiles` is used for the item/inventory/wield image rendering.
 ---* Use `backface_culling = false` for the special tiles you want to make
 ---  visible when inside the node
----|"glasslike"
+---|"flowingliquid"
 ---* Often used for partially-transparent nodes.
 ---* Only external sides of textures are visible.
----|"glasslike_framed"
+---|"glasslike"
 ---* All face-connected nodes are drawn as one volume within a surrounding
 ---  frame.
 ---* The frame appearance is generated from the edges of the first texture
@@ -1231,20 +1230,20 @@ local node = {}
 ---  size: 1 pixel for 16x16, 2 pixels for 32x32 etc.
 ---* The glass 'shine' (or other desired detail) on each node face is supplied
 ---  by the second texture specified in `tiles`.
----|"glasslike_framed_optional"
+---|"glasslike_framed"
 ---* This switches between the above 2 drawtypes according to the menu setting
 ---  'Connected Glass'.
----|"allfaces"
+---|"glasslike_framed_optional"
 ---* Often used for partially-transparent nodes.
 ---* External and internal sides of textures are visible.
----|"allfaces_optional"
+---|"allfaces"
 ---* Often used for leaves nodes.
 ---* This switches between `normal`, `glasslike` and `allfaces` according to
 ---  the menu setting: Opaque Leaves / Simple Leaves / Fancy Leaves.
 ---* With 'Simple Leaves' selected, the texture specified in `special_tiles`
 ---  is used instead, if present. This allows a visually thicker texture to be
 ---  used to compensate for how `glasslike` reduces visual thickness.
----|"torchlike"
+---|"allfaces_optional"
 ---* A single vertical texture.
 ---* If `paramtype2="[color]wallmounted"`:
 ---  * If placed on top of a node, uses the first texture specified in `tiles`.
@@ -1255,24 +1254,24 @@ local node = {}
 ---* If `paramtype2="none"`:
 ---  * Will be rendered as if placed on top of a node (see
 ---    above) and only the first texture is used.
----|"signlike"
+---|"torchlike"
 ---* A single texture parallel to, and mounted against, the top, underside or
 ---  side of a node.
 ---* If `paramtype2="[color]wallmounted"`, it rotates according to `param2`
 ---* If `paramtype2="none"`, it will always be on the floor.
----|"plantlike"
+---|"signlike"
 ---* Two vertical and diagonal textures at right-angles to each other.
 ---* See `paramtype2 = "meshoptions"` above for other options.
----|"firelike"
+---|"plantlike"
 ---* When above a flat surface, appears as 6 textures, the central 2 as
 ---  `plantlike` plus 4 more surrounding those.
 ---* If not above a surface the central 2 do not appear, but the texture
 ---  appears against the faces of surrounding nodes if they are present.
----|"fencelike"
+---|"firelike"
 ---* A 3D model suitable for a wooden fence.
 ---* One placed node appears as a single vertical post.
 ---* Adjacently-placed nodes cause horizontal bars to appear between them.
----|"raillike"
+---|"fencelike"
 ---* Often used for tracks for mining carts.
 ---* Requires 4 textures to be specified in `tiles`, in order: Straight,
 ---  curved, t-junction, crossing.
@@ -1280,16 +1279,16 @@ local node = {}
 ---  determined by the adjacent `raillike` nodes, in order to create a
 ---  continuous track network.
 ---* Becomes a sloping node if placed against stepped nodes.
----|"nodebox"
+---|"raillike"
 ---* Often used for stairs and slabs.
 ---* Allows defining nodes consisting of an arbitrary number of boxes.
 ---* See [Node boxes] below for more information.
----|"mesh"
+---|"nodebox"
 ---* Uses models for nodes.
 ---* Tiles should hold model materials textures.
 ---* Only static meshes are implemented.
 ---* For supported model formats see Irrlicht engine documentation.
----|"plantlike_rooted"
+---|"mesh"
 ---* Enables underwater `plantlike` without air bubbles around the nodes.
 ---* Consists of a base cube at the co-ordinates of the node plus a
 ---  `plantlike` extension above
@@ -1303,6 +1302,7 @@ local node = {}
 ---* The base cube texture tiles are defined as normal, the `plantlike`
 ---  extension uses the defined special tile, for example:
 ---  `special_tiles = {{name = "default_papyrus.png"}},`
+---|"plantlike_rooted"
 
 ---Node boxes
 -------------
@@ -1551,7 +1551,7 @@ local hud = {}
 ---* `alignment`: The alignment of the minimap.
 ---* `offset`: offset in pixels from position.
 ---|"minimap"
-hud.type = nil
+hud.hud_elem_type = nil
 
 -- Top left corner position of element. Is used for all element types.
 ---To account for differing resolutions, the position coordinates are the
@@ -2412,7 +2412,7 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 
 ---Formspec
 ---========
----
+
 ---Formspec defines a menu. This supports inventories and some of the
 ---typical widgets like buttons, checkboxes, text input fields, etc.
 ---It is a string, with a somewhat strange format.
@@ -2479,6 +2479,20 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 ---    list[current_player;craft;3,0;3,3;]
 ---    list[current_player;craftpreview;7,1;1,1;]
 ---
+---@alias mt.formspec string
+---
+---* Set the formspec version to a certain number. If not specified,
+---  version 1 is assumed.
+---* Must be specified before `size` element.
+---* Clients older than this version can neither show newer elements nor display
+---  elements with new arguments correctly.
+---* Available since feature `formspec_version_element`.
+---* See also: [Version History]
+---|"formspec_version[<version>]"
+
+---@type mt.formspec
+local formspec = "formspec_version[<version>]"
+
 ---Version History
 ------------------
 ---
@@ -2502,15 +2516,6 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 ---Elements
 -----------
 ---
----### `formspec_version[<version>]`
----
----* Set the formspec version to a certain number. If not specified,
----  version 1 is assumed.
----* Must be specified before `size` element.
----* Clients older than this version can neither show newer elements nor display
----  elements with new arguments correctly.
----* Available since feature `formspec_version_element`.
----* See also: [Version History]
 ---
 ---### `size[<W>,<H>,<fixed_size>]`
 ---
