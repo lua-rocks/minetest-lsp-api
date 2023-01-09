@@ -959,6 +959,8 @@ local sound_spec = {}
 ---@field object mt.ObjectRef|nil
 local sound_parameters = {}
 
+---@class mt.sound_handle
+
 ---* `parameters` is a sound parameter table
 ---@param spec mt.SimpleSoundSpec
 ---@param parameters table
@@ -967,13 +969,13 @@ local sound_parameters = {}
 --- It is recommend to use this for short sounds that happen in response to
 --- player actions (e.g. door closing).
 ---@param ephemeral boolean|nil
----@return unknown handle
+---@return mt.sound_handle handle
 function minetest.sound_play(spec, parameters, ephemeral) end
 
----@param handle unknown
+---@param handle mt.sound_handle
 function minetest.sound_stop(handle) end
 
----@param handle unknown
+---@param handle mt.sound_handle
 ---@param step number
 ---@param gain number
 function minetest.sound_fade(handle, step, gain) end
