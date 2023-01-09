@@ -994,7 +994,7 @@ function minetest.sound_fade(handle, step, gain) end
 ---
 ---Registered definitions
 ---======================
----
+
 ---Anything added using certain [Registration functions] gets added to one or more
 ---of the global [Registered definition tables].
 ---
@@ -1011,10 +1011,10 @@ function minetest.sound_fade(handle, step, gain) end
 ---
 ---    local def = minetest.registered_nodes[nodename]
 ---    local drawtype = def and def.drawtype
----
----
----
----
+function minetest.register_node(name, definition) end
+
+minetest.registered_nodes = {}
+
 ---Nodes
 ---=====
 
@@ -5358,7 +5358,6 @@ end
 ---
 ---### Environment
 ---
----* `minetest.register_node(name, node definition)`
 ---* `minetest.register_craftitem(name, item definition)`
 ---* `minetest.register_tool(name, item definition)`
 ---* `minetest.override_item(name, redefinition)`
