@@ -3056,12 +3056,12 @@ local formspec = ""
 ---A few elements had random offsets in the old system. Here is a table which shows these
 ---offsets when migrating:
 ---
----| Element |  Position  |  Size   | Notes
----|---------|------------|---------|-------
----| box     | +0.3, +0.1 | 0, -0.4 |
----| button  |            |         | Buttons now support height, so set h = 2 * 15/13 * 0.35, and ---reposition if h ~= 15/13 * 0.35 before
----| list    |            |         | Spacing is now 0.25 for both directions, meaning lists will be ---taller in height
----| label   | 0, +0.3    |         | The first line of text is now positioned centered exactly at the ---position specified
+-- | Element |  Position  |  Size   | Notes
+-- |---------|------------|---------|-------
+-- | box     | +0.3, +0.1 | 0, -0.4 |
+-- | button  |            |         | Buttons now support height, so set h = 2 * 15/13 * 0.35, and ---reposition if h ~= 15/13 * 0.35 before
+-- | list    |            |         | Spacing is now 0.25 for both directions, meaning lists will be ---taller in height
+-- | label   | 0, +0.3    |         | The first line of text is now positioned centered exactly at the ---position specified
 ---
 ---
 ---
