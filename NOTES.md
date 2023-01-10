@@ -19,4 +19,15 @@ changes from the original .txt file is easy to update in .lua file.
 
 ## Temporary notes and bokmarks
 
-Last topic: Translations
+Current topic: Utilities
+
+## Temporary Skipped topics
+
+- Perlin noise
+- Ores
+- Decoration types
+- VoxelManip
+- VoxelArea
+- Mapgen objects
+- L-system trees
+- Privileges

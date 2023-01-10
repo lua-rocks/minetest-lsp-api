@@ -3923,8 +3923,8 @@ end
 ---
 ---Two functions are provided to translate strings: `minetest.translate` and
 ---`minetest.get_translator`.
----
----* `minetest.get_translator(textdomain)` is a simple wrapper around
+
+---* A simple wrapper around
 ---  `minetest.translate`, and `minetest.get_translator(textdomain)(str, ...)` is
 ---  equivalent to `minetest.translate(textdomain, str, ...)`.
 ---  It is intended to be used in the following way, so that it avoids verbose
@@ -3934,7 +3934,10 @@ end
 ---      S(str, ...)
 ---
 ---  As an extra commodity, if `textdomain` is nil, it is assumed to be "" instead.
----
+---@param textdomain string
+---@return string
+function minetest.get_translator(textdomain) end
+
 ---* `minetest.translate(textdomain, str, ...)` translates the string `str` with
 ---  the given `textdomain` for disambiguation. The textdomain must match the
 ---  textdomain specified in the translation file in order to get the string
@@ -3961,7 +3964,11 @@ end
 ---      Red=Rouge
 ---
 ---  this will be displayed as "Laine Rouge" on clients with a French locale.
----
+---@param textdomain string
+---@param ... string
+---@return string
+function minetest.translate(textdomain, ...) end
+
 ---Operations on translated strings
 -----------------------------------
 ---
@@ -4010,11 +4017,11 @@ end
 ---
 ---Server side translations
 ---------------------------
----
+
 ---On some specific cases, server translation could be useful. For example, filter
 ---a list on labels and send results to client. A method is supplied to achieve
 ---that:
----
+
 ---`minetest.get_translated_string(lang_code, string)`: Translates `string` using
 ---translations for `lang_code` language. It gives the same result as if the string
 ---was translated by the client.
@@ -4024,7 +4031,11 @@ end
 ---
 ---IMPORTANT: This functionality should only be used for sorting, filtering or similar purposes.
 ---You do not need to use this to get translated strings to show up on the client.
----
+---@param lang_code string
+---@param str string
+---@return string
+function minetest.get_translated_string(lang_code, str) end
+
 ---Perlin noise
 ---============
 ---
