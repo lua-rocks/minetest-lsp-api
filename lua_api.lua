@@ -5068,18 +5068,27 @@ function minetest.get_translated_string(lang_code, str) end
 ---
 ---Utilities
 ------------
----
----* `minetest.get_current_modname()`: returns the currently loading mod's name,
----  when loading a mod.
----* `minetest.get_modpath(modname)`: returns the directory path for a mod,
+
+--- Returns the currently loading mod's name, when loading a mod.
+---@return string
+function minetest.get_current_modname() end
+
+---* Returns the directory path for a mod,
 ---  e.g. `"/home/user/.minetest/usermods/modname"`.
 ---* Returns nil if the mod is not enabled or does not exist (not installed).
 ---* Works regardless of whether the mod has been loaded yet.
 ---* Useful for loading additional `.lua` modules or static data from a mod,
 ---  or checking if a mod is enabled.
----* `minetest.get_modnames()`: returns a list of enabled mods, sorted alphabetically.
+---@param modname string
+---@return string
+function minetest.get_modpath(modname) end
+
+---* Returns a list of enabled mods, sorted alphabetically.
 ---* Does not include disabled mods, even if they are installed.
----* `minetest.get_game_info()`: returns a table containing information about the
+---@return string[]
+function minetest.get_modnames() end
+
+---* Returns a table containing information about the
 ---  current game. Note that other meta information (e.g. version/release number)
 ---  can be manually read from `game.conf` in the game's root directory.
 ---
@@ -5090,78 +5099,116 @@ function minetest.get_translated_string(lang_code, str) end
 ---          -- The root directory of the game
 ---          path = string,
 ---      }
----
----* `minetest.get_worldpath()`: returns e.g. `"/home/user/.minetest/world"`
+---@return {id: string, title: string, author: string, path: string}
+function minetest.get_game_info() end
+
+---* Returns e.g. `"/home/user/.minetest/world"`
 ---* Useful for storing custom data
----* `minetest.is_singleplayer()`
+---@return string
+function minetest.get_worldpath() end
+
+---@return boolean
+function minetest.is_singleplayer() end
+
 ---* `minetest.features`: Table containing API feature flags
 ---
----      {
----          glasslike_framed = true,  -- 0.4.7
----          nodebox_as_selectionbox = true,  -- 0.4.7
----          get_all_craft_recipes_works = true,  -- 0.4.7
----          -- The transparency channel of textures can optionally be used on
----          -- nodes (0.4.7)
----          use_texture_alpha = true,
----          -- Tree and grass ABMs are no longer done from C++ (0.4.8)
----          no_legacy_abms = true,
----          -- Texture grouping is possible using parentheses (0.4.11)
----          texture_names_parens = true,
----          -- Unique Area ID for AreaStore:insert_area (0.4.14)
----          area_store_custom_ids = true,
----          -- add_entity supports passing initial staticdata to on_activate
----          -- (0.4.16)
----          add_entity_with_staticdata = true,
----          -- Chat messages are no longer predicted (0.4.16)
----          no_chat_message_prediction = true,
----          -- The transparency channel of textures can optionally be used on
----          -- objects (ie: players and lua entities) (5.0.0)
----          object_use_texture_alpha = true,
----          -- Object selectionbox is settable independently from collisionbox
----          -- (5.0.0)
----          object_independent_selectionbox = true,
----          -- Specifies whether binary data can be uploaded or downloaded using
----          -- the HTTP API (5.1.0)
----          httpfetch_binary_data = true,
----          -- Whether formspec_version[<version>] may be used (5.1.0)
----          formspec_version_element = true,
----          -- Whether AreaStore's IDs are kept on save/load (5.1.0)
----          area_store_persistent_ids = true,
----          -- Whether minetest.find_path is functional (5.2.0)
----          pathfinder_works = true,
----          -- Whether Collision info is available to an objects' on_step (5.3.0)
----          object_step_has_moveresult = true,
----          -- Whether get_velocity() and add_velocity() can be used on players (5.4.0)
----          direct_velocity_on_players = true,
----          -- nodedef's use_texture_alpha accepts new string modes (5.4.0)
----          use_texture_alpha_string_modes = true,
----          -- degrotate param2 rotates in units of 1.5° instead of 2°
----          -- thus changing the range of values from 0-179 to 0-240 (5.5.0)
----          degrotate_240_steps = true,
----          -- ABM supports min_y and max_y fields in definition (5.5.0)
----          abm_min_max_y = true,
----          -- dynamic_add_media supports passing a table with options (5.5.0)
----          dynamic_add_media_table = true,
----          -- particlespawners support texpools and animation of properties,
----          -- particle textures support smooth fade and scale animations, and
----          -- sprite-sheet particle animations can by synced to the lifetime
----          -- of individual particles (5.6.0)
----          particlespawner_tweenable = true,
----          -- allows get_sky to return a table instead of separate values (5.6.0)
----          get_sky_as_table = true,
----          -- VoxelManip:get_light_data accepts an optional buffer argument (5.7.0)
----          get_light_data_buffer = true,
----          -- When using a mod storage backend that is not "files" or "dummy",
----          -- the amount of data in mod storage is not constrained by
----          -- the amount of RAM available. (5.7.0)
----          mod_storage_on_disk = true,
----          -- "zstd" method for compress/decompress (5.7.0)
----          compress_zstd = true,
----      }
----
----* `minetest.has_feature(arg)`: returns `boolean, missing_features`
----* `arg`: string or table in format `{foo=true, bar=true}`
----* `missing_features`: `{foo=true, bar=true}`
+---```lua
+---{
+---    glasslike_framed = true,  -- 0.4.7
+---    nodebox_as_selectionbox = true,  -- 0.4.7
+---    get_all_craft_recipes_works = true,  -- 0.4.7
+---    -- The transparency channel of textures can optionally be used on
+---    -- nodes (0.4.7)
+---    use_texture_alpha = true,
+---    -- Tree and grass ABMs are no longer done from C++ (0.4.8)
+---    no_legacy_abms = true,
+---    -- Texture grouping is possible using parentheses (0.4.11)
+---    texture_names_parens = true,
+---    -- Unique Area ID for AreaStore:insert_area (0.4.14)
+---    area_store_custom_ids = true,
+---    -- add_entity supports passing initial staticdata to on_activate
+---    -- (0.4.16)
+---    add_entity_with_staticdata = true,
+---    -- Chat messages are no longer predicted (0.4.16)
+---    no_chat_message_prediction = true,
+---    -- The transparency channel of textures can optionally be used on
+---    -- objects (ie: players and lua entities) (5.0.0)
+---    object_use_texture_alpha = true,
+---    -- Object selectionbox is settable independently from collisionbox
+---    -- (5.0.0)
+---    object_independent_selectionbox = true,
+---    -- Specifies whether binary data can be uploaded or downloaded using
+---    -- the HTTP API (5.1.0)
+---    httpfetch_binary_data = true,
+---    -- Whether formspec_version[<version>] may be used (5.1.0)
+---    formspec_version_element = true,
+---    -- Whether AreaStore's IDs are kept on save/load (5.1.0)
+---    area_store_persistent_ids = true,
+---    -- Whether minetest.find_path is functional (5.2.0)
+---    pathfinder_works = true,
+---    -- Whether Collision info is available to an objects' on_step (5.3.0)
+---    object_step_has_moveresult = true,
+---    -- Whether get_velocity() and add_velocity() can be used on players (5.4.0)
+---    direct_velocity_on_players = true,
+---    -- nodedef's use_texture_alpha accepts new string modes (5.4.0)
+---    use_texture_alpha_string_modes = true,
+---    -- degrotate param2 rotates in units of 1.5° instead of 2°
+---    -- thus changing the range of values from 0-179 to 0-240 (5.5.0)
+---    degrotate_240_steps = true,
+---    -- ABM supports min_y and max_y fields in definition (5.5.0)
+---    abm_min_max_y = true,
+---    -- dynamic_add_media supports passing a table with options (5.5.0)
+---    dynamic_add_media_table = true,
+---    -- particlespawners support texpools and animation of properties,
+---    -- particle textures support smooth fade and scale animations, and
+---    -- sprite-sheet particle animations can by synced to the lifetime
+---    -- of individual particles (5.6.0)
+---    particlespawner_tweenable = true,
+---    -- allows get_sky to return a table instead of separate values (5.6.0)
+---    get_sky_as_table = true,
+---    -- VoxelManip:get_light_data accepts an optional buffer argument (5.7.0)
+---    get_light_data_buffer = true,
+---    -- When using a mod storage backend that is not "files" or "dummy",
+---    -- the amount of data in mod storage is not constrained by
+---    -- the amount of RAM available. (5.7.0)
+---    mod_storage_on_disk = true,
+---    -- "zstd" method for compress/decompress (5.7.0)
+---    compress_zstd = true,
+---```
+---}
+---@class mt.feature
+---@field glasslike_framed boolean
+---@field nodebox_as_selectionbox boolean
+---@field get_all_craft_recipes_works boolean
+---@field use_texture_alpha boolean
+---@field no_legacy_abms boolean
+---@field texture_names_parens boolean
+---@field area_store_custom_ids boolean
+---@field add_entity_with_staticdata boolean
+---@field no_chat_message_prediction boolean
+---@field object_use_texture_alpha boolean
+---@field object_independent_selectionbox boolean
+---@field httpfetch_binary_data boolean
+---@field formspec_version_element boolean
+---@field area_store_persistent_ids boolean
+---@field pathfinder_works boolean
+---@field object_step_has_moveresult boolean
+---@field direct_velocity_on_players boolean
+---@field use_texture_alpha_string_modes boolean
+---@field degrotate_240_steps boolean
+---@field abm_min_max_y boolean
+---@field dynamic_add_media_table boolean
+---@field particlespawner_tweenable boolean
+---@field get_sky_as_table boolean
+---@field get_light_data_buffer boolean
+---@field mod_storage_on_disk boolean
+---@field compress_zstd boolean
+minetest.features = {}
+
+---@param arg string | table<mt.feature, boolean>
+---@return boolean, table<mt.feature, boolean> missing
+function minetest.has_feature(arg) end
+
 ---* `minetest.get_player_information(player_name)`: Table containing information
 ---  about a player. Example return value:
 ---
