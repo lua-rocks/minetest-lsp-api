@@ -5110,7 +5110,7 @@ function minetest.get_worldpath() end
 ---@return boolean
 function minetest.is_singleplayer() end
 
----* `minetest.features`: Table containing API feature flags
+---* Table containing API feature flags
 ---
 ---```lua
 ---{
@@ -5209,58 +5209,81 @@ minetest.features = {}
 ---@return boolean, table<mt.feature, boolean> missing
 function minetest.has_feature(arg) end
 
----* `minetest.get_player_information(player_name)`: Table containing information
----  about a player. Example return value:
+---Table containing information about a player.
+---@class mt.player_info
+---@field address string IP address of client
+---@field ip_version integer ip_version
+---@field connection_uptime number seconds since client connected
+---@field protocol_version integer protocol version used by client
+---@field formspec_version integer supported formspec version
+---@field lang_code string Language code used for translation
+---@field min_rtt number|nil minimum round trip time
+---@field max_rtt number|nil maximum round trip time
+---@field avg_rtt number|nil average round trip time
+---@field min_jitter number|nil minimum packet time jitter
+---@field max_jitter number|nil maximum packet time jitter
+---@field avg_jitter number|nil average packet time jitter
+
+---* The following information is available in a debug build only!!!
+---* **DO NOT USE IN MODS**
 ---
----      {
----          address = "127.0.0.1",     -- IP address of client
----          ip_version = 4,            -- IPv4 / IPv6
----          connection_uptime = 200,   -- seconds since client connected
----          protocol_version = 32,     -- protocol version used by client
----          formspec_version = 2,      -- supported formspec version
----          lang_code = "fr"           -- Language code used for translation
----          -- the following keys can be missing if no stats have been collected yet
----          min_rtt = 0.01,            -- minimum round trip time
----          max_rtt = 0.2,             -- maximum round trip time
----          avg_rtt = 0.02,            -- average round trip time
----          min_jitter = 0.01,         -- minimum packet time jitter
----          max_jitter = 0.5,          -- maximum packet time jitter
----          avg_jitter = 0.03,         -- average packet time jitter
----          -- the following information is available in a debug build only!!!
----          -- DO NOT USE IN MODS
----          --ser_vers = 26,             -- serialization version used by client
----          --major = 0,                 -- major version number
----          --minor = 4,                 -- minor version number
----          --patch = 10,                -- patch version number
----          --vers_string = "0.4.9-git", -- full version string
----          --state = "Active"           -- current client state
----      }
----
----* `minetest.mkdir(path)`: returns success.
+---* ser_vers = 26,             -- serialization version used by client
+---* major = 0,                 -- major version number
+---* minor = 4,                 -- minor version number
+---* patch = 10,                -- patch version number
+---* vers_string = "0.4.9-git", -- full version string
+---* state = "Active"           -- current client state
+
+---@param player_name string
+---@return mt.player_info
+function minetest.get_player_information(player_name) end
+
 ---* Creates a directory specified by `path`, creating parent directories
 ---      if they don't exist.
----* `minetest.rmdir(path, recursive)`: returns success.
+---@param path string
+---@return boolean success
+function minetest.mkdir(path) end
+
 ---* Removes a directory specified by `path`.
 ---* If `recursive` is set to `true`, the directory is recursively removed.
 ---      Otherwise, the directory will only be removed if it is empty.
----* Returns true on success, false on failure.
----* `minetest.cpdir(source, destination)`: returns success.
+---@param path string
+---@param recursive boolean
+---@return boolean success
+function minetest.rmdir(path, recursive) end
+
 ---* Copies a directory specified by `path` to `destination`
 ---* Any files in `destination` will be overwritten if they already exist.
----* Returns true on success, false on failure.
----* `minetest.mvdir(source, destination)`: returns success.
+---@param path string
+---@param destination string
+---@return boolean success
+function minetest.cpdir(path, destination) end
+
 ---* Moves a directory specified by `path` to `destination`.
 ---* If the `destination` is a non-empty directory, then the move will fail.
----* Returns true on success, false on failure.
----* `minetest.get_dir_list(path, [is_dir])`: returns list of entry names
+---@param path string
+---@param destination string
+---@return boolean success
+function minetest.mvdir(path, destination) end
+
+---* Returns list of entry names.
 ---* is_dir is one of:
 ---        * nil: return all entries,
 ---        * true: return only subdirectory names, or
 ---        * false: return only file names.
----* `minetest.safe_file_write(path, content)`: returns boolean indicating success
+---@param path string
+---@param is_dir boolean|nil
+---@return string[]
+function minetest.get_dir_list(path, is_dir) end
+
 ---* Replaces contents of file at path with new contents in a safe (atomic)
 ---      way. Use this instead of below code when writing e.g. database files:
 ---      `local f = io.open(path, "wb"); f:write(content); f:close()`
+---@param path string
+---@param content string
+---@return boolean success
+function minetest.safe_file_write(path, content) end
+
 ---* `minetest.get_version()`: returns a table containing components of the
 ---   engine version.  Components:
 ---* `project`: Name of the project, eg, "Minetest"

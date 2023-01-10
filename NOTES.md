@@ -19,7 +19,7 @@ changes from the original .txt file is easy to update in .lua file.
 
 ## Temporary notes and bokmarks
 
-Current topic: Utilities
+Current topic: minetest.get_version()
 
 ## Temporary Skipped topics
 
