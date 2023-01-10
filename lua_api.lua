@@ -3332,7 +3332,7 @@ local test = "checkbox[<X>,<Y>;<name>;<label>;<selected>]"
 ---
 ---`ColorString`
 ----------------
----
+
 ---`#RGB` defines a color in hexadecimal format.
 ---
 ---`#RGBA` defines a color in hexadecimal format and alpha channel.
@@ -3345,7 +3345,8 @@ local test = "checkbox[<X>,<Y>;<name>;<label>;<selected>]"
 ---[CSS Color Module Level 4](https://www.w3.org/TR/css-color-4/#named-color).
 ---To specify the value of the alpha channel, append `#A` or `#AA` to the end of
 ---the color name (e.g. `colorname#08`).
----
+---@alias mt.ColorString string
+
 ---`ColorSpec`
 --------------
 
@@ -3360,17 +3361,12 @@ local test = "checkbox[<X>,<Y>;<name>;<label>;<selected>]"
 ---* `colorspec = "green"`
 ---@alias mt.ColorSpec mt.ColorTable|mt.ColorString
 
----@alias mt.ColorString string
-
 ---@class mt.ColorTable
 ---@field r number
 ---@field g number
 ---@field b number
 ---@field a number
 
----
----
----
 ---Escape sequences
 ---================
 ---
@@ -3913,9 +3909,6 @@ function minetest.get_hit_params(groups, tool_capabilities, time_from_last_punch
 	return {}
 end
 
----
----
----
 ---Translations
 ---============
 ---

@@ -19,4 +19,4 @@ changes from the original .txt file is easy to update in .lua file.
 
 ## Temporary notes and bokmarks
 
-Last topic: Formspec -> Inventory
+Last topic: Translations
