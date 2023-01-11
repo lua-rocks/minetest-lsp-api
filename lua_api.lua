@@ -8588,7 +8588,7 @@ function respawn() end
 ---        frame_length = 0.5,
 ---        -- Length of a single frame
 ---    }
----
+
 ---Item definition
 ------------------
 
