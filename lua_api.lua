@@ -1814,7 +1814,7 @@ pointed_thing.intersection_normal = nil
 ---
 ---
 ---
----
+
 ---Groups
 ---======
 
@@ -1847,8 +1847,137 @@ pointed_thing.intersection_normal = nil
 ---The asterisk `(*)` after a group name describes that there is no engine
 ---functionality bound to it, and implementation is left up as a suggestion
 ---to games.
----@class mt.group
-local group = {}
+---@alias mt.groupname string
+---|mt.groupname_nodeitem
+---|mt.groupname_node
+---|mt.groupname_tool
+---|mt.groupname_armor
+---|mt.groupname_common
+---|mt.groupname_custom
+
+---Node and item groups.
+---@alias mt.groupname_nodeitem
+---* `(*)` Special group for inventory mods
+---  to indicatethat the item should be hidden in item lists.
+---|"not_in_creative_inventory"
+
+---Node-only groups.
+---@alias mt.groupname_node
+---* The node is 'attached' to a neighboring node. It checks
+---  whether the node it is attached to is walkable. If it
+---  isn't, the node will drop as an item.
+---* `1`: if the node is wallmounted, the node is attached in the wallmounted
+---           direction. Otherwise, the node is attached to the node below.
+---* `2`: if the node is facedir or 4dir, the facedir or 4dir direction is checked.
+---           No effect for other nodes.
+---           Note: The "attaching face" of this node is tile no. 5 (back face).
+---* `3`: the node is always attached to the node below.
+---* `4`: the node is always attached to the node above.
+---|"group.attached_node"
+---* Value is bounce speed in percent.
+---  If positive, jump/sneak on floor impact will increase/decrease bounce height.
+---  Negative value is the same bounciness, but non-controllable.
+---|"bouncy"
+---* Makes nodes of raillike drawtype with same group value
+---  connect to each other
+---|"connect_to_raillike"
+---* Player can always pick up node without reducing tool wear
+---* `2`: the node always gets the digging time 0.5 seconds (rail, sign)
+---* `3`: the node always gets the digging time 0 seconds (torch)
+---|"dig_immediate"
+---* Player (and possibly other things) cannot jump from node
+---  or if their feet are in the node. Note: not supported for `new_move = false`
+---|"disable_jump"
+---* Modifies the fall damage suffered when hitting
+---  the top of this node. There's also an armor group with the same name.
+---  The final player damage is determined by the following formula:
+---    damage =
+---      collision speed
+---      * ((node_fall_damage_add_percent   + 100) / 100) -- node group
+---      * ((player_fall_damage_add_percent + 100) / 100) -- player armor group
+---      - (14)                                           -- constant tolerance
+---  Negative damage values are discarded as no damage.
+---|"fall_damage_add_percent"
+---* If there is no walkable block under the node it will fall
+---|"falling_node"
+---* The node will not fall through liquids (`liquidtype ~= "none"`)
+---|"float"
+---* Can be used to give an additional sense of progression in the game.
+---     * A larger level will cause e.g. a weapon of a lower level make much less
+---       damage, and get worn out much faster, or not be able to get drops
+---       from destroyed nodes.
+---     * `0` is something that is directly accessible at the start of gameplay
+---     * There is no upper limit
+---     * See also: `leveldiff` in [Tool Capabilities]
+---|"level"
+---* Players and items will slide on the node.
+---  Slipperiness rises steadily with `slippery` value, starting at 1.
+---|"slippery"
+
+---Tool-only group.
+---@alias mt.groupname_tool
+---* If set to 1 for a tool, it cannot be repaired using the
+---  `"toolrepair"` crafting recipe
+---|"disable_repair"
+
+---`ObjectRef` armor group.
+---@alias mt.groupname_armor
+---* Skips all damage and breath handling for an object. This group
+---  will also hide the integrated HUD status bars for players. It is
+---  automatically set to all players when damage is disabled on the server and
+---  cannot be reset (subject to change).
+---|"immortal"
+---* Modifies the fall damage suffered by players
+---  when they hit the ground. It is analog to the node group with the same
+---  name. See the node group above for the exact calculation.
+---|"fall_damage_add_percent"
+---* For entities; disables the regular damage mechanism for
+---  players punching it by hand or a non-tool item, so that it can do something
+---  else than take damage.
+---|"punch_operable"
+
+---Known damage and digging time defining group.
+---@alias mt.groupname_common
+---* dirt, sand
+---|"crumbly"
+---* Tough but crackable stuff like stone.
+---|"cracky"
+---* Something that can be cut using things like scissors, shears,
+---  bolt cutters and the like, e.g. leaves, small plants, wire, sheets of metal
+---|"snappy"
+---* Something that can be cut using force; e.g. trees, wooden planks
+---|"choppy"
+---* Living things like animals and the player. This could imply
+---  some blood effects when hitting.
+---|"fleshy"
+---* Especially prone to explosions
+---|"explody"
+---   Can be added to nodes that shouldn't logically be breakable by the
+---   hand but are. Somewhat similar to `dig_immediate`, but times are more
+---   like `{[1]=3.50,[2]=2.00,[3]=0.70}` and this does not override the
+---   digging speed of an item if it can dig at a faster speed than this
+---   suggests for the hand.
+---|"oddly_breakable_by_hand"
+
+---Examples of custom group.
+---@alias mt.groupname_custom
+---* Any meat-kind of a thing (rating might define the size or healing
+---  ability or be irrelevant -- it is not defined as of yet)
+---|"meat"
+---* Anything that can be eaten. Rating might define HP gain in half
+---  hearts.
+---|"eatable"
+---* Can be set on fire. Rating might define the intensity of the
+---  fire, affecting e.g. the speed of the spreading of an open fire.
+---|"flammable"
+---* Any wool (any origin, any color)
+---|"wool"
+---* Any metal
+---|"metal"
+---* Any weapon
+---|"weapon"
+---* Anything considerably heavy
+---|"heavy"
 
 ---Groups of items
 ------------------
@@ -1917,157 +2046,6 @@ local group = {}
 ---        output = "wool:red",
 ---        recipe = {"wool:white", "group:dye,basecolor_red"},
 ---    }
----
----### Node and item groups
-
----* `(*)` Special group for inventory mods
----  to indicatethat the item should be hidden in item lists.
-group.not_in_creative_inventory = nil
-
----### Node-only groups
-
----* The node is 'attached' to a neighboring node. It checks
----  whether the node it is attached to is walkable. If it
----  isn't, the node will drop as an item.
----* `1`: if the node is wallmounted, the node is attached in the wallmounted
----           direction. Otherwise, the node is attached to the node below.
----* `2`: if the node is facedir or 4dir, the facedir or 4dir direction is checked.
----           No effect for other nodes.
----           Note: The "attaching face" of this node is tile no. 5 (back face).
----* `3`: the node is always attached to the node below.
----* `4`: the node is always attached to the node above.
-group.attached_node = nil
-
----* Value is bounce speed in percent.
----  If positive, jump/sneak on floor impact will increase/decrease bounce height.
----  Negative value is the same bounciness, but non-controllable.
-group.bouncy = nil
-
----* Makes nodes of raillike drawtype with same group value
----  connect to each other
-group.connect_to_raillike = nil
-
----* Player can always pick up node without reducing tool wear
----* `2`: the node always gets the digging time 0.5 seconds (rail, sign)
----* `3`: the node always gets the digging time 0 seconds (torch)
-group.dig_immediate = nil
-
----* Player (and possibly other things) cannot jump from node
----  or if their feet are in the node. Note: not supported for `new_move = false`
-group.disable_jump = nil
-
----* Modifies the fall damage suffered when hitting
----  the top of this node. There's also an armor group with the same name.
----  The final player damage is determined by the following formula:
----    damage =
----      collision speed
----      * ((node_fall_damage_add_percent   + 100) / 100) -- node group
----      * ((player_fall_damage_add_percent + 100) / 100) -- player armor group
----      - (14)                                           -- constant tolerance
----  Negative damage values are discarded as no damage.
-group.fall_damage_add_percent = nil
-
----* If there is no walkable block under the node it will fall
-group.falling_node = nil
-
----* The node will not fall through liquids (`liquidtype ~= "none"`)
-group.float = nil
-
----* Can be used to give an additional sense of progression in the game.
----     * A larger level will cause e.g. a weapon of a lower level make much less
----       damage, and get worn out much faster, or not be able to get drops
----       from destroyed nodes.
----     * `0` is something that is directly accessible at the start of gameplay
----     * There is no upper limit
----     * See also: `leveldiff` in [Tool Capabilities]
-group.level = nil
-
----* Players and items will slide on the node.
----  Slipperiness rises steadily with `slippery` value, starting at 1.
-group.slippery = nil
-
----### Tool-only groups
-
----* If set to 1 for a tool, it cannot be repaired using the
----  `"toolrepair"` crafting recipe
-group.disable_repair = nil
-
----### `ObjectRef` armor groups
-
----* Skips all damage and breath handling for an object. This group
----  will also hide the integrated HUD status bars for players. It is
----  automatically set to all players when damage is disabled on the server and
----  cannot be reset (subject to change).
-group.immortal = nil
-
----* Modifies the fall damage suffered by players
----  when they hit the ground. It is analog to the node group with the same
----  name. See the node group above for the exact calculation.
-group.fall_damage_add_percent = nil
-
----* For entities; disables the regular damage mechanism for
----  players punching it by hand or a non-tool item, so that it can do something
----  else than take damage.
-group.punch_operable = nil
-
----Known damage and digging time defining groups
-------------------------------------------------
-
----* dirt, sand
-group.crumbly = nil
-
----* Tough but crackable stuff like stone.
-group.cracky = nil
-
----* Something that can be cut using things like scissors, shears,
----  bolt cutters and the like, e.g. leaves, small plants, wire, sheets of metal
-group.snappy = nil
-
----* Something that can be cut using force; e.g. trees, wooden planks
-group.choppy = nil
-
----* Living things like animals and the player. This could imply
----  some blood effects when hitting.
-group.fleshy = nil
-
----* Especially prone to explosions
-group.explody = nil
-
----   Can be added to nodes that shouldn't logically be breakable by the
----   hand but are. Somewhat similar to `dig_immediate`, but times are more
----   like `{[1]=3.50,[2]=2.00,[3]=0.70}` and this does not override the
----   digging speed of an item if it can dig at a faster speed than this
----   suggests for the hand.
-group.oddly_breakable_by_hand = nil
-
----Examples of custom groups
-----------------------------
-
----Item groups are often used for defining, well, _groups of items_.
-
----* Any meat-kind of a thing (rating might define the size or healing
----  ability or be irrelevant -- it is not defined as of yet)
-group.meat = nil
-
----* Anything that can be eaten. Rating might define HP gain in half
----  hearts.
-group.eatable = nil
-
----* Can be set on fire. Rating might define the intensity of the
----  fire, affecting e.g. the speed of the spreading of an open fire.
-group.flammable = nil
-
----* Any wool (any origin, any color)
-group.wool = nil
-
----* Any metal
-group.metal = nil
-
----* Any weapon
-group.weapon = nil
-
----* Anything considerably heavy
-group.heavy = nil
 
 ---Digging time calculation specifics
 -------------------------------------
@@ -5297,47 +5275,64 @@ function minetest.safe_file_write(path, content) end
 ---  version entirely. To check for the presence of engine features, test
 ---  whether the functions exported by the wanted features exist. For example:
 ---  `if minetest.check_for_falling then ... end`.
----* `minetest.sha1(data, [raw])`: returns the sha1 hash of data
----* `data`: string of data to hash
----* `raw`: return raw bytes instead of hex digits, default: false
----* `minetest.colorspec_to_colorstring(colorspec)`: Converts a ColorSpec to a
----  ColorString. If the ColorSpec is invalid, returns `nil`.
----* `colorspec`: The ColorSpec to convert
----* `minetest.colorspec_to_bytes(colorspec)`: Converts a ColorSpec to a raw
----  string of four bytes in an RGBA layout, returned as a string.
----  * `colorspec`: The ColorSpec to convert
----* `minetest.encode_png(width, height, data, [compression])`: Encode a PNG
----  image and return it in string form.
----* `width`: Width of the image
----* `height`: Height of the image
+---@return { project: string, string: string, hash: string, is_dev: boolean }
+function minetest.get_version() end
+
+---* Returns the sha1 hash of data.
+---@param data string
+---@param raw boolean|nil `false` return raw bytes instead of hex digits
+---@return string
+function minetest.sha1(data, raw) end
+
+---* Converts a ColorSpec to a ColorString.
+---* If the ColorSpec is invalid, returns `nil`.
+---@param colorspec mt.ColorSpec
+---@return mt.ColorString|nil
+function minetest.colorspec_to_colorstring(colorspec) end
+
+---* Converts a ColorSpec to a raw string of four bytes in an RGBA layout.
+---@param colorspec mt.ColorSpec
+---@return string
+function minetest.colorspec_to_bytes(colorspec) end
+
+---* Encode a PNG image and return it in string form.
 ---* `data`: Image data, one of:
 ---        * array table of ColorSpec, length must be width*height
 ---        * string with raw RGBA pixels, length must be width*height*4
----* `compression`: Optional zlib compression level, number in range 0 to 9.
 ---  The data is one-dimensional, starting in the upper left corner of the image
 ---  and laid out in scanlines going from left to right, then top to bottom.
 ---  Please note that it's not safe to use string.char to generate raw data,
 ---  use `colorspec_to_bytes` to generate raw RGBA values in a predictable way.
 ---  The resulting PNG image is always 32-bit. Palettes are not supported at the moment.
 ---  You may use this to procedurally generate textures during server init.
----
+---@param width integer
+---@param height integer
+---@param data mt.ColorSpec[]|string
+---@param compression integer|nil Optional zlib compression level from 0 to 9.
+function minetest.encode_png(width, height, data, compression) end
+
 ---Logging
 ----------
----
----* `minetest.debug(...)`
+
 ---* Equivalent to `minetest.log(table.concat({...}, "\t"))`
----* `minetest.log([level,] text)`
----* `level` is one of `"none"`, `"error"`, `"warning"`, `"action"`,
----      `"info"`, or `"verbose"`.  Default is `"none"`.
----
+function minetest.debug(...) end
+
+---@param level "none"|"error"|"warning"|"action"|"info"|"verbose"|nil `"none"`
+---@param text string
+function minetest.log(level, text) end
+
 ---Registration functions
 -------------------------
 ---
 ---Call these functions only at load time!
 ---
 ---### Environment
----
+
 ---* `minetest.register_craftitem(name, item definition)`
+---@param name string
+---@param item mt.item
+function minetest.register_craftitem(name, item) end
+
 ---* `minetest.register_tool(name, item definition)`
 ---* `minetest.override_item(name, redefinition)`
 ---* Overrides fields of an item registered with register_node/tool/craftitem.
@@ -8596,94 +8591,63 @@ function respawn() end
 ---
 ---Item definition
 ------------------
----
+
 ---Used by `minetest.register_node`, `minetest.register_craftitem`, and
 ---`minetest.register_tool`.
----
----    {
----        description = "",
----        -- Can contain new lines. "\n" has to be used as new line character.
----        -- See also: `get_description` in [`ItemStack`]
----
----        short_description = "",
----        -- Must not contain new lines.
----        -- Defaults to nil.
----        -- Use an [`ItemStack`] to get the short description, e.g.:
----        --   ItemStack(itemname):get_short_description()
----
----        groups = {},
----        -- key = name, value = rating; rating = <number>.
----        -- If rating not applicable, use 1.
----        -- e.g. {wool = 1, fluffy = 3}
----        --      {soil = 2, outerspace = 1, crumbly = 1}
----        --      {bendy = 2, snappy = 1},
----        --      {hard = 1, metal = 1, spikes = 1}
----
----        inventory_image = "",
----        -- Texture shown in the inventory GUI
----        -- Defaults to a 3D rendering of the node if left empty.
----
----        inventory_overlay = "",
----        -- An overlay texture which is not affected by colorization
----
----        wield_image = "",
----        -- Texture shown when item is held in hand
----        -- Defaults to a 3D rendering of the node if left empty.
----
----        wield_overlay = "",
----        -- Like inventory_overlay but only used in the same situation as wield_image
----
----        wield_scale = {x = 1, y = 1, z = 1},
----        -- Scale for the item when held in hand
----
----        palette = "",
----        -- An image file containing the palette of a node.
----        -- You can set the currently used color as the "palette_index" field of
----        -- the item stack metadata.
----        -- The palette is always stretched to fit indexes between 0 and 255, to
----        -- ensure compatibility with "colorfacedir" (and similar) nodes.
----
----        color = "#ffffffff",
----        -- Color the item is colorized with. The palette overrides this.
----
----        stack_max = 99,
----        -- Maximum amount of items that can be in a single stack.
----        -- The default can be changed by the setting `default_stack_max`
----
----        range = 4.0,
----        -- Range of node and object pointing that is possible with this item held
----
----        liquids_pointable = false,
----        -- If true, item can point to all liquid nodes (`liquidtype ~= "none"`),
----        -- even those for which `pointable = false`
----
----        light_source = 0,
----        -- When used for nodes: Defines amount of light emitted by node.
----        -- Otherwise: Defines texture glow when viewed as a dropped item
----        -- To set the maximum (14), use the value 'minetest.LIGHT_MAX'.
----        -- A value outside the range 0 to minetest.LIGHT_MAX causes undefined
----        -- behavior.
----
----        -- See "Tool Capabilities" section for an example including explanation
----        tool_capabilities = {
----            full_punch_interval = 1.0,
----            max_drop_level = 0,
----            groupcaps = {
----                -- For example:
----                choppy = {times = {2.50, 1.40, 1.00}, uses = 20, maxlevel = 2},
----            },
----            damage_groups = {groupname = damage},
----            -- Damage values must be between -32768 and 32767 (2^15)
----
----            punch_attack_uses = nil,
----        },
-
---- Amount of uses this tool has for attacking players and entities
+---@class mt.item
+---* Can contain new lines. "\n" has to be used as new line character.
+---* See also: `get_description` in `ItemStack`
+---@field description string
+---* Must not contain new lines.
+---* Use an `ItemStack` to get the short description, e.g.:
+---  ItemStack(itemname):get_short_description()
+---@field short_description string|nil
+---* key = name, value = rating.
+---* If rating not applicable, use 1.
+---@field groups table<mt.groupname, integer>
+---* Texture shown in the inventory GUI.
+---* Defaults to a 3D rendering of the node if left empty.
+---@field inventory_image mt.texture_string|nil
+---* An overlay texture which is not affected by colorization.
+---@field inventory_overlay mt.texture_string
+---* Texture shown when item is held in hand.
+---* Defaults to a 3D rendering of the node if left empty.
+---@field wield_image mt.texture_string
+---* Like inventory_overlay but only used in the same situation as wield_image.
+---@field wield_overlay mt.texture_string
+---* Scale for the item when held in hand
+---@field wield_scale mt.vector|mt.SimpleVector
+---* An image file containing the palette of a node.
+---* You can set the currently used color as the "palette_index" field of
+---  the item stack metadata.
+---* The palette is always stretched to fit indexes between 0 and 255, to
+---  ensure compatibility with "colorfacedir" (and similar) nodes.
+---@field palette mt.texture_string
+---* Color the item is colorized with. The palette overrides this.
+---@field color mt.ColorString
+---* Maximum amount of items that can be in a single stack.
+---* The default can be changed by the setting `default_stack_max`
+---@field stack_max integer
+---* Range of node and object pointing that is possible with this item held.
+---@field range number
+---* If true, item can point to all liquid nodes (`liquidtype ~= "none"`),
+---  even those for which `pointable = false`.
+---@field liquids_pointable boolean
+---* When used for nodes: Defines amount of light emitted by node.
+---* Otherwise: Defines texture glow when viewed as a dropped item.
+---* To set the maximum (14), use the value 'minetest.LIGHT_MAX'.
+---* A value outside the range 0 to minetest.LIGHT_MAX causes undefined
+--- behavior.
+---@field light_source number
+---* Amount of uses this tool has for attacking players and entities
 --- by punching them (0 = infinite uses).
---- For compatibility, this is automatically set from the first
+---* For compatibility, this is automatically set from the first
 --- suitable groupcap using the formula "uses * 3^(maxlevel - 1)".
 --- It is recommend to set this explicitly instead of relying on the
 --- fallback behavior.
+---@field tool_capabilities mt.tool_capabilities
+local item = {}
+
 ---@type integer|nil
 tool_capabilities.punch_attack_uses = nil
 
