@@ -7038,7 +7038,7 @@ function InvRef:add_item(listname, stack) end
 ---* Returns `true` if the stack of items can be fully added to the list.
 ---@param listname string
 ---@param stack mt.ItemStack
----@return boolean is_room
+---@return boolean
 function InvRef:room_for_item(listname, stack) end
 
 ---* Returns `true` if the stack of items can be fully taken from the list.
