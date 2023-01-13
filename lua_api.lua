@@ -671,7 +671,7 @@ function minetest.register_alias_force(alias, original_name) end
 ---In particular consider `minetest.dynamic_add_media` and test whether
 ---using other texture modifiers could result in a shorter string than
 ---embedding a whole image, this may vary by use case.
----@alias mt.texture_string string
+---@alias mt.TextureString string
 
 ---Hardware coloring
 --------------------
@@ -935,13 +935,13 @@ function minetest.register_alias_force(alias, original_name) end
 ---* `{name = "default_place_node", gain = 0.5}`: 50% volume
 ---* `{name = "default_place_node", gain = 0.9, pitch = 1.1}`: 90% volume, 110% pitch
 ---
----@class mt.sound_spec
+---@class mt.SoundSpec
 ---@field name string|nil
 ---@field gain number|nil
 ---@field pitch number|nil
 local sound_spec = {}
 
----@alias mt.SimpleSoundSpec mt.sound_spec|string
+---@alias mt.SimpleSoundSpec mt.SoundSpec|string
 
 ---Looped sounds must either be connected to an object or played locationless to
 ---one player using `to_player = name`.
@@ -951,19 +951,19 @@ local sound_spec = {}
 ---
 ---`exclude_player = name` can be applied to locationless, positional and object-
 ---bound sounds to exclude a single player from hearing them.
----@class mt.sound_parameters
+---@class mt.SoundParameters
 ---@field gain number|nil `1.0`
 ---@field pitch number|nil `1.0`
 ---@field fade number|nil `0.0` Change to a value > 0 to fade the sound in.
 ---@field to_player string|nil Name.
 ---@field exclude_player string|nil Name.
 ---@field loop boolean|nil
----@field pos mt.vector|mt.SimpleVector|nil
+---@field pos mt.Vector|mt.VectorSimple|nil
 ---@field max_hear_distance number|nil `32`
 ---@field object mt.ObjectRef|nil
 local sound_parameters = {}
 
----@class mt.sound_handle
+---@class mt.SoundHandle
 
 ---* `parameters` is a sound parameter table
 ---@param spec mt.SimpleSoundSpec
@@ -973,13 +973,13 @@ local sound_parameters = {}
 --- It is recommend to use this for short sounds that happen in response to
 --- player actions (e.g. door closing).
 ---@param ephemeral boolean|nil
----@return mt.sound_handle handle
+---@return mt.SoundHandle handle
 function minetest.sound_play(spec, parameters, ephemeral) end
 
----@param handle mt.sound_handle
+---@param handle mt.SoundHandle
 function minetest.sound_stop(handle) end
 
----@param handle mt.sound_handle
+---@param handle mt.SoundHandle
 ---@param step number
 ---@param gain number
 function minetest.sound_fade(handle, step, gain) end
@@ -1016,7 +1016,7 @@ function minetest.sound_fade(handle, step, gain) end
 ---    local def = minetest.registered_nodes[nodename]
 ---    local drawtype = def and def.drawtype
 ---@param name string
----@param definition mt.node
+---@param definition mt.Node
 function minetest.register_node(name, definition) end
 
 minetest.registered_nodes = {}
@@ -1040,7 +1040,7 @@ minetest.registered_nodes = {}
 ---`param1` and `param2` are 8-bit integers ranging from 0 to 255. The engine uses
 ---them for certain automated functions. If you don't use these functions, you can
 ---use them to store arbitrary values.
----@class mt.node
+---@class mt.Node
 ---@field name string
 ---@field param1 integer
 ---@field param2 integer
@@ -1054,7 +1054,7 @@ local node = {}
 ---
 ---The function of `param1` is determined by `paramtype` in node definition.
 ---`param1` is reserved for the engine when `paramtype != "none"`.
----@alias mt.paramtype
+---@alias mt.ParamType
 ---* The value stores light with and without sun in its lower and upper 4 bits
 ---  respectively.
 ---* Required by a light source node to enable spreading its light.
@@ -1076,7 +1076,7 @@ local node = {}
 
 ---The function of `param2` is determined by `paramtype2` in node definition.
 ---`param2` is reserved for the engine when `paramtype2 != "none"`.
----@alias mt.paramtype2
+---@alias mt.ParamType2
 ---* Used by `drawtype = "flowingliquid"` and `liquidtype = "flowing"`
 ---* The liquid level and a flag of the liquid are stored in `param2`
 ---* Bits 0-2: Liquid level (0-7). The higher, the more liquid is in this node;
@@ -1201,7 +1201,7 @@ local node = {}
 ---
 ---`*_optional` drawtypes need less rendering time if deactivated.
 ---(always client-side).
----@alias mt.drawtype string
+---@alias mt.DrawType string
 ---* A node-sized cube.
 ---|"normal"
 ---* Invisible, uses no texture.
@@ -1376,7 +1376,7 @@ local node = {}
 ---To avoid collision issues, keep each value within the range of +/- 1.45.
 ---This also applies to leveled nodeboxes, where the final height shall not
 ---exceed this soft limit.
----@alias mt.nodebox table
+---@alias mt.NodeBox table
 
 ---Map terminology and coordinates
 ---===============================
@@ -1392,13 +1392,13 @@ local node = {}
 ---clients and handled by many parts of the engine.
 ---'mapblock' is preferred terminology to 'block' to help avoid confusion with
 ---'node', however 'block' often appears in the API.
----@alias mt.mapblock table
+---@alias mt.MapBlock table
 
 ---A 'mapchunk' (sometimes abbreviated to 'chunk') is usually 5x5x5 mapblocks
 ---(80x80x80 nodes) and is the volume of world generated in one operation by
 ---the map generator.
 ---The size in mapblocks has been chosen to optimize map generation.
----@alias mt.mapchunk table
+---@alias mt.MapChunk table
 
 ---Coordinates
 --------------
@@ -1444,7 +1444,7 @@ local node = {}
 ---Used by `ObjectRef:hud_add`. Returned by `ObjectRef:hud_get`.
 ---
 ---@class mt.HUD
----@field world_pos mt.vector|mt.SimpleVector Behavior depends on `type` field.
+---@field world_pos mt.Vector|mt.VectorSimple Behavior depends on `type` field.
 ---@field scale {x: number, y: number} Behavior depends on `type` field.
 ---@field size {x: number, y: number} Behavior depends on `type` field.
 ---@field text string Behavior depends on `type` field.
@@ -1630,10 +1630,10 @@ hud.z_index = nil
 ---`pointed_thing`
 ------------------
 
----@class mt.pointed_thing
+---@class mt.PointedThing
 ---@field type "nothing"|"node"|"object"
----@field under mt.vector|nil Refers to the node position behind the pointed face.
----@field above mt.vector|nil Refers to the node position in front of the pointed face.
+---@field under mt.Vector|nil Refers to the node position behind the pointed face.
+---@field above mt.Vector|nil Refers to the node position in front of the pointed face.
 ---@field ref mt.ObjectRef|nil
 local pointed_thing = {}
 
@@ -1641,7 +1641,7 @@ local pointed_thing = {}
 
 ---* The absolute world coordinates of the point on the selection box which is
 ---  pointed at. May be in the selection box if the pointer is in the box too.
----@type mt.vector|nil
+---@type mt.Vector|nil
 pointed_thing.intersection_point = nil
 
 ---* The ID of the pointed selection box (counting starts from 1).
@@ -1653,7 +1653,7 @@ pointed_thing.box_id = nil
 ---  Is a null vector `vector.zero()` when the pointer is inside the selection box.
 ---  For entities with rotated selection boxes, this will be rotated properly
 ---  by the entity's rotation - it will always be in absolute world space.
----@type mt.vector|nil
+---@type mt.Vector|nil
 pointed_thing.intersection_normal = nil
 
 ---Flag Specifier Format
@@ -1847,22 +1847,22 @@ pointed_thing.intersection_normal = nil
 ---The asterisk `(*)` after a group name describes that there is no engine
 ---functionality bound to it, and implementation is left up as a suggestion
 ---to games.
----@alias mt.groupname string
----|mt.groupname_nodeitem
----|mt.groupname_node
----|mt.groupname_tool
----|mt.groupname_armor
----|mt.groupname_common
----|mt.groupname_custom
+---@alias mt.GroupName string
+---|mt.GroupNameNodeItem
+---|mt.GroupNameNode
+---|mt.GroupNameTool
+---|mt.GroupNameArmor
+---|mt.GroupNameCommon
+---|mt.GroupNameCustom
 
 ---Node and item groups.
----@alias mt.groupname_nodeitem
+---@alias mt.GroupNameNodeItem
 ---* `(*)` Special group for inventory mods
 ---  to indicatethat the item should be hidden in item lists.
 ---|"not_in_creative_inventory"
 
 ---Node-only groups.
----@alias mt.groupname_node
+---@alias mt.GroupNameNode
 ---* The node is 'attached' to a neighboring node. It checks
 ---  whether the node it is attached to is walkable. If it
 ---  isn't, the node will drop as an item.
@@ -1915,13 +1915,13 @@ pointed_thing.intersection_normal = nil
 ---|"slippery"
 
 ---Tool-only group.
----@alias mt.groupname_tool
+---@alias mt.GroupNameTool
 ---* If set to 1 for a tool, it cannot be repaired using the
 ---  `"toolrepair"` crafting recipe
 ---|"disable_repair"
 
 ---`ObjectRef` armor group.
----@alias mt.groupname_armor
+---@alias mt.GroupNameArmor
 ---* Skips all damage and breath handling for an object. This group
 ---  will also hide the integrated HUD status bars for players. It is
 ---  automatically set to all players when damage is disabled on the server and
@@ -1937,7 +1937,7 @@ pointed_thing.intersection_normal = nil
 ---|"punch_operable"
 
 ---Known damage and digging time defining group.
----@alias mt.groupname_common
+---@alias mt.GroupNameCommon
 ---* dirt, sand
 ---|"crumbly"
 ---* Tough but crackable stuff like stone.
@@ -1960,7 +1960,7 @@ pointed_thing.intersection_normal = nil
 ---|"oddly_breakable_by_hand"
 
 ---Examples of custom group.
----@alias mt.groupname_custom
+---@alias mt.GroupNameCustom
 ---* Any meat-kind of a thing (rating might define the size or healing
 ---  ability or be irrelevant -- it is not defined as of yet)
 ---|"meat"
@@ -2091,7 +2091,7 @@ pointed_thing.intersection_normal = nil
 ---* Digging times
 ---* Damage groups
 ---* Punch attack uses (until the tool breaks)
----@class mt.tool_capabilities
+---@class mt.ToolCapabilities
 local tool_capabilities = {}
 
 ---### Full punch interval `full_punch_interval`
@@ -2314,7 +2314,7 @@ tool_capabilities.damage_groups = nil
 local NodeMetaRef = {}
 
 ---Get node metadata from the position.
----@param pos mt.vector|mt.SimpleVector
+---@param pos mt.Vector|mt.VectorSimple
 ---@return mt.NodeMetaRef
 function minetest.get_meta(pos) end
 
@@ -2389,7 +2389,7 @@ function ItemStack:get_meta() end
 
 ---* Overrides the item's tool capabilities
 ---* A nil value will clear the override data and restore the original behavior.
----@param tool_capabilities mt.tool_capabilities|nil
+---@param tool_capabilities mt.ToolCapabilities|nil
 function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 
 ---Formspec
@@ -2571,7 +2571,7 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 ---    list[current_player;craft;3,0;3,3;]
 ---    list[current_player;craftpreview;7,1;1,1;]
 ---
----@alias mt.formspec string
+---@alias mt.FormSpec string
 ---
 ---* Set the formspec version to a certain number. If not specified,
 ---  version 1 is assumed.
@@ -3279,7 +3279,7 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 -- | list    |            |         | Spacing is now 0.25 for both directions, meaning lists will be taller in height
 -- | label   | 0, +0.3    |         | The first line of text is now positioned centered exactly at the position specified
 
----@type mt.formspec
+---@type mt.FormSpec
 local test = "checkbox[<X>,<Y>;<name>;<label>;<selected>]"
 
 ---Inventory
@@ -3413,7 +3413,7 @@ function minetest.strip_colors(str) end
 ---* `(x, y, z)` (Used rarely, and only if it's clear that it's a vector.)
 ---* `vector.new(x, y, z)`
 ---* `{x=num, y=num, z=num}` (Even here you are still supposed to use `vector.new`.)
----@class mt.vector
+---@class mt.Vector
 ---@field x number
 ---@field y number
 ---@field z number
@@ -3438,7 +3438,7 @@ vector = {}
 ---
 ---Vectors provided by API functions will provide an instance of this class if not
 ---stated otherwise. Mods should adapt this for convenience reasons.
----@class mt.SimpleVector
+---@class mt.VectorSimple
 ---@field x number
 ---@field y number
 ---@field z number
@@ -3479,18 +3479,18 @@ vector = {}
 ---@param x number
 ---@param y number
 ---@param z number
----@overload fun(v: mt.vector): mt.vector copy
----@overload fun(): mt.vector zero
----@return mt.vector
+---@overload fun(v: mt.Vector): mt.Vector copy
+---@overload fun(): mt.Vector zero
+---@return mt.Vector
 function vector.new(x, y, z) end
 
 ---* Returns a new vector `(0, 0, 0)`.
----@return mt.vector
+---@return mt.Vector
 function vector.zero() end
 
 ---* Returns a copy of the vector `v`.
----@param v mt.vector
----@return mt.vector
+---@param v mt.Vector
+---@return mt.Vector
 function vector.copy(v) end
 
 ---* Returns `v, np`, where `v` is a vector read from the given string `s` and
@@ -3502,105 +3502,105 @@ function vector.copy(v) end
 ---* `init`: If given starts looking for the vector at this string index.
 ---@param s string
 ---@param init integer|nil
----@return mt.vector, integer | nil
+---@return mt.Vector, integer | nil
 function vector.from_string(s, init) end
 
 ---* Returns a string of the form `"(x, y, z)"`.
 ---*  `tostring(v)` does the same.
----@param v mt.vector
+---@param v mt.Vector
 ---@return string
 function vector.to_string(v) end
 
 ---* Returns a vector of length 1 with direction `p1` to `p2`.
 ---* If `p1` and `p2` are identical, returns `(0, 0, 0)`.
----@param p1 mt.vector
----@param p2 mt.vector
----@return mt.vector
+---@param p1 mt.Vector
+---@param p2 mt.Vector
+---@return mt.Vector
 function vector.direction(p1, p2) end
 
 ---* Returns zero or a positive number, the distance between `p1` and `p2`.
----@param p1 mt.vector
----@param p2 mt.vector
+---@param p1 mt.Vector
+---@param p2 mt.Vector
 ---@return number
 function vector.distance(p1, p2) end
 
 ---* Returns zero or a positive number, the length of vector `v`.
----@param v mt.vector
+---@param v mt.Vector
 ---@return number
 function vector.length(v) end
 
 ---* Returns a vector of length 1 with direction of vector `v`.
 ---* If `v` has zero length, returns `(0, 0, 0)`.
----@param v mt.vector
----@return mt.vector
+---@param v mt.Vector
+---@return mt.Vector
 function vector.normalize(v) end
 
 ---* Returns a vector, each dimension rounded down.
----@param v mt.vector
----@return mt.vector
+---@param v mt.Vector
+---@return mt.Vector
 function vector.floor(v) end
 
 ---* Returns a vector, each dimension rounded to nearest integer.
 ---* At a multiple of 0.5, rounds away from zero.
----@param v mt.vector
----@return mt.vector
+---@param v mt.Vector
+---@return mt.Vector
 function vector.round(v) end
 
 ---* Returns a vector where the function `f` has been applied to each component.
----@param v mt.vector
+---@param v mt.Vector
 ---@param f function
 function vector.apply(v, f) end
 
 ---* Returns a vector where the function `f` has combined both components
 ---  of `v` and `w` for each component
----@param v mt.vector
----@param w mt.vector
+---@param v mt.Vector
+---@param w mt.Vector
 ---@param f function
----@return mt.vector
+---@return mt.Vector
 function vector.combine(v, w, f) end
 
 ---* Returns a boolean, `true` if the vectors are identical.
----@param v1 mt.vector
----@param v2 mt.vector
+---@param v1 mt.Vector
+---@param v2 mt.Vector
 ---@return boolean
 function vector.equals(v1, v2) end
 
 ---* Returns in order minp, maxp vectors of the cuboid defined by `v1`, `v2`.
----@param v1 mt.vector
----@param v2 mt.vector
----@return mt.vector, mt.vector
+---@param v1 mt.Vector
+---@param v2 mt.Vector
+---@return mt.Vector, mt.Vector
 function vector.sort(v1, v2) end
 
 ---* Returns the angle between `v1` and `v2` in radians.
----@param v1 mt.vector
----@param v2 mt.vector
+---@param v1 mt.Vector
+---@param v2 mt.Vector
 ---@return number
 function vector.angle(v1, v2) end
 
 ---* Returns the dot product of `v1` and `v2`.
----@param v1 mt.vector
----@param v2 mt.vector
----@return mt.vector
+---@param v1 mt.Vector
+---@param v2 mt.Vector
+---@return mt.Vector
 function vector.dot(v1, v2) end
 
 ---* Returns the cross product of `v1` and `v2`.
----@param v1 mt.vector
----@param v2 mt.vector
----@return mt.vector
+---@param v1 mt.Vector
+---@param v2 mt.Vector
+---@return mt.Vector
 function vector.cross(v1, v2) end
 
 ---* Returns the sum of the vectors `v` and `(x, y, z)`.
----@param v mt.vector
+---@param v mt.Vector
 ---@param x number
 ---@param y number
 ---@param z number
----@return mt.vector
+---@return mt.Vector
 function vector.offset(v, x, y, z) end
 
 ---* Returns a boolean value indicating whether `v` is a real vector,
 ---  eg. created by a `vector.*` function.
 ---* Returns `false` for anything else, including tables like `{x=3,y=1,z=4}`.
----@param v mt.vector
+---@param v mt.Vector
 ---@return boolean
 function vector.check(v) end
 
@@ -3608,30 +3608,30 @@ function vector.check(v) end
 
 ---* If `x` is a vector: Returns the sum of `v` and `x`.
 ---* If `x` is a number: Adds `x` to each component of `v`.
----@param v mt.vector
----@param x mt.vector|number
----@return mt.vector
+---@param v mt.Vector
+---@param x mt.Vector|number
+---@return mt.Vector
 function vector.add(v, x) end
 
 ---* If `x` is a vector: Returns the difference of `v` subtracted by `x`.
 ---* If `x` is a number: Subtracts `x` from each component of `v`.
----@param v mt.vector
----@param x mt.vector|number
----@return mt.vector
+---@param v mt.Vector
+---@param x mt.Vector|number
+---@return mt.Vector
 function vector.subtract(v, x) end
 
 ---* Returns a scaled vector.
 ---* Deprecated: If `s` is a vector: Returns the Schur product.
----@param v mt.vector
----@param s mt.vector|string
----@return mt.vector
+---@param v mt.Vector
+---@param s mt.Vector|string
+---@return mt.Vector
 function vector.multiply(v, s) end
 
 ---* Returns a scaled vector.
 ---* Deprecated: If `s` is a vector: Returns the Schur quotient.
----@param v mt.vector
----@param s mt.vector|string
----@return mt.vector
+---@param v mt.Vector
+---@param s mt.Vector|string
+---@return mt.Vector
 function vector.divide(v, s) end
 
 ---Operators
@@ -3664,26 +3664,26 @@ function vector.divide(v, s) end
 ---* `vector.rotate(vector.new(0, 0, 1), r)` and
 ---  `vector.rotate(vector.new(0, 1, 0), r)` return vectors pointing
 ---  forward and up relative to an entity's rotation `r`.
----@param v mt.vector
----@param r mt.vector
----@return mt.vector
+---@param v mt.Vector
+---@param r mt.Vector
+---@return mt.Vector
 function vector.rotate(v, r) end
 
 ---* Returns `v1` rotated around axis `v2` by `a` radians according to
 ---  the right hand rule.
----@param v1 mt.vector
----@param v2 mt.vector
+---@param v1 mt.Vector
+---@param v2 mt.Vector
 ---@param a number
----@return mt.vector
+---@return mt.Vector
 function vector.rotate_around_axis(v1, v2, a) end
 
 ---* Returns a rotation vector for `direction` pointing forward using `up`
 ---  as the up vector.
 ---* If `up` is omitted, the roll of the returned vector defaults to zero.
 ---* Otherwise `direction` and `up` need to be vectors in a 90 degree angle to each other.
----@param direction mt.vector
----@param up mt.vector|nil
----@return mt.vector
+---@param direction mt.Vector
+---@param up mt.Vector|nil
+---@return mt.Vector
 function vector.dir_to_rotation(direction, up) end
 
 ---Further helpers
@@ -3766,7 +3766,7 @@ function string:trim() end
 function minetest.wrap_text(str, limit, as_table) end
 
 ---* Converts the position `pos` to a human-readable, printable string.
----@param pos mt.vector|mt.SimpleVector
+---@param pos mt.Vector|mt.VectorSimple
 ---@param decimal_places? number|nil If specified, the x, y and z values of the position are rounded to the given decimal place.
 ---@return string `"(X,Y,Z)"`
 function minetest.pos_to_string(pos, decimal_places) end
@@ -3774,7 +3774,7 @@ function minetest.pos_to_string(pos, decimal_places) end
 ---* Converts the string position `"(X,Y,Z)"` to vector.
 ---* If the string can't be parsed to a position, nothing is returned.
 ---@param s string
----@return mt.vector|nil position
+---@return mt.Vector|nil position
 function minetest.string_to_pos(s) end
 
 ---* Converts 2 string positions: `"(X1, Y1, Z1) (X2, Y2, Z2)"` to 2 vectors.
@@ -3787,8 +3787,8 @@ function minetest.string_to_pos(s) end
 ---* Example: `minetest.string_to_area("(1,2,3) (~5,~-5,~)", {x=10,y=10,z=10})`
 ---  returns `{x=1,y=2,z=3}, {x=15,y=5,z=10}`
 ---@param s string
----@param relative_to mt.vector|mt.SimpleVector|nil
----@return mt.vector, mt.vector
+---@param relative_to mt.Vector|mt.VectorSimple|nil
+---@return mt.Vector, mt.Vector
 function minetest.string_to_area(s, relative_to) end
 
 ---* escapes the characters "[", "]", "\", "," and ";", which cannot be used
@@ -3849,8 +3849,8 @@ function table.shuffle(t, from, to, random_func) end
 
 ---* Returns the exact position on the surface of a pointed node.
 ---@param placer mt.ObjectRef
----@param pointed_thing mt.pointed_thing
----@return mt.vector position
+---@param pointed_thing mt.PointedThing
+---@return mt.Vector position
 function minetest.pointed_thing_to_face_pos(placer, pointed_thing) end
 
 ---* Simulates a tool being used once and returns the added wear,
@@ -3861,28 +3861,28 @@ function minetest.pointed_thing_to_face_pos(placer, pointed_thing) end
 function minetest.get_tool_wear_after_use(uses, initial_wear) end
 
 ---Fields `time` and `wear` are meaningless if node's not `diggable`.
----@class mt.dig_params
+---@class mt.DigParameters
 ---@field diggable boolean Can node be dug?
 ---@field time number Time it would take to dig the node.
 ---@field wear number How much wear would be added to the tool (ignored for non-tools).
 
 ---Simulates an item that digs a node.
 ---@param groups table Table of the node groups of the node that would be dug.
----@param tool_capabilities mt.tool_capabilities Tool capabilities table of the item.
+---@param tool_capabilities mt.ToolCapabilities Tool capabilities table of the item.
 ---@param wear number|nil `0` Amount of wear the tool starts with.
----@return mt.dig_params
+---@return mt.DigParameters
 function minetest.get_dig_params(groups, tool_capabilities, wear) end
 
----@class mt.hit_params
+---@class mt.HitParameters
 ---@field hp number How much damage the punch would cause (between -65535 and 65535).
 ---@field wear number How much wear would be added to the tool (ignored for non-tools).
 
 ---Simulates an item that punches an object.
 ---@param groups table Damage groups of the object.
----@param tool_capabilities mt.tool_capabilities Tool capabilities table of the item.
+---@param tool_capabilities mt.ToolCapabilities Tool capabilities table of the item.
 ---@param time_from_last_punch number|nil Time in seconds since last punch action.
 ---@param wear number|nil `0` Amount of wear the item starts with.
----@return mt.hit_params
+---@return mt.HitParameters
 function minetest.get_hit_params(groups, tool_capabilities, time_from_last_punch, wear)
 	return {}
 end
@@ -5154,7 +5154,7 @@ function minetest.is_singleplayer() end
 ---    compress_zstd = true,
 ---```
 ---}
----@class mt.feature
+---@class mt.Feature
 ---@field glasslike_framed boolean
 ---@field nodebox_as_selectionbox boolean
 ---@field get_all_craft_recipes_works boolean
@@ -5183,12 +5183,12 @@ function minetest.is_singleplayer() end
 ---@field compress_zstd boolean
 minetest.features = {}
 
----@param arg string | table<mt.feature, boolean>
----@return boolean, table<mt.feature, boolean> missing
+---@param arg string | table<mt.Feature, boolean>
+---@return boolean, table<mt.Feature, boolean> missing
 function minetest.has_feature(arg) end
 
 ---Table containing information about a player.
----@class mt.player_info
+---@class mt.PlayerInfo
 ---@field address string IP address of client
 ---@field ip_version integer ip_version
 ---@field connection_uptime number seconds since client connected
@@ -5213,7 +5213,7 @@ function minetest.has_feature(arg) end
 ---* state = "Active"           -- current client state
 
 ---@param player_name string
----@return mt.player_info
+---@return mt.PlayerInfo
 function minetest.get_player_information(player_name) end
 
 ---* Creates a directory specified by `path`, creating parent directories
@@ -5329,11 +5329,11 @@ function minetest.log(level, text) end
 ---### Environment
 
 ---@param name string
----@param item mt.item
+---@param item mt.Item
 function minetest.register_craftitem(name, item) end
 
 ---@param name string
----@param item mt.item
+---@param item mt.Item
 function minetest.register_tool(name, item) end
 
 ---* Overrides fields of an item registered with register_node/tool/craftitem.
@@ -5341,7 +5341,7 @@ function minetest.register_tool(name, item) end
 ---* Example: `minetest.override_item("default:mese",
 ---  {light_source=minetest.LIGHT_MAX})`
 ---@param name string
----@param item mt.item
+---@param item mt.Item
 function minetest.override_item(name, item) end
 
 ---* Unregisters the item from the engine, and deletes the entry with key
@@ -7222,7 +7222,7 @@ function ItemStack:get_definition() end
 
 ---* Returns the digging properties of the item,
 ---  or those of the hand if none are defined for this item type.
----@return mt.tool_capabilities
+---@return mt.ToolCapabilities
 function ItemStack:get_tool_capabilities() end
 
 ---* Increases wear by `amount` if the item is a tool, otherwise does nothing
@@ -7398,13 +7398,13 @@ local ObjectRef = {}
 ---
 ---### Methods
 
----@return mt.vector
+---@return mt.Vector
 function ObjectRef:get_pos() end
 
----@param pos mt.vector|mt.SimpleVector
+---@param pos mt.Vector|mt.VectorSimple
 function ObjectRef:set_pos(pos) end
 
----@return mt.vector
+---@return mt.Vector
 function ObjectRef:get_velocity() end
 
 ---* In comparison to using get_velocity, adding the velocity and then using
@@ -7417,21 +7417,21 @@ function ObjectRef:get_velocity() end
 ---    (see: physics overrides) will cause existing X/Z velocity to be reduced.
 ---  * Example: `add_velocity({x=0, y=6.5, z=0})` is equivalent to
 ---    pressing the jump key (assuming default settings)
----@param vel mt.vector|mt.SimpleVector
+---@param vel mt.Vector|mt.VectorSimple
 function ObjectRef:add_velocity(vel) end
 
 ---* Does an interpolated move for Lua entities for visually smooth transitions.
 ---* If `continuous` is true, the Lua entity will not be moved to the current
 ---      position before starting the interpolated move.
 ---* For players this does the same as `set_pos`,`continuous` is ignored.
----@param pos mt.vector|mt.SimpleVector
+---@param pos mt.Vector|mt.VectorSimple
 ---@param continuous? boolean|nil `false`
 function ObjectRef:move_to(pos, continuous) end
 
 ---@param puncher mt.ObjectRef
 ---@param time_from_last_punch number|nil Time since last punch action.
----@param tool_capabilities mt.tool_capabilities|nil
----@param direction mt.vector|nil
+---@param tool_capabilities mt.ToolCapabilities|nil
+---@param direction mt.Vector|nil
 function ObjectRef:punch(puncher, time_from_last_punch, tool_capabilities, direction) end
 
 ---@param clicker mt.ObjectRef
@@ -7492,8 +7492,8 @@ function ObjectRef:set_animation_frame_speed(frame_speed) end
 
 ---@param parent mt.ObjectRef
 ---@param bone string|nil `""` The root bone.
----@param position mt.vector|nil `{x=0, y=0, z=0}` Relative position.
----@param rotation mt.vector|nil `{x=0, y=0, z=0}` Relative rotation in degrees.
+---@param position mt.Vector|nil `{x=0, y=0, z=0}` Relative position.
+---@param rotation mt.Vector|nil `{x=0, y=0, z=0}` Relative rotation in degrees.
 ---@param forced_visible boolean|nil `false` Should appear in first person?
 function ObjectRef:set_attach(parent, bone, position, rotation, forced_visible) end
 
@@ -7503,8 +7503,8 @@ function ObjectRef:set_attach(parent, bone, position, rotation, forced_visible) 
 ---  or nil if it isn't attached.
 ---@return mt.ObjectRef parent
 ---@return string|nil bone The root bone.
----@return mt.vector|nil position Relative position.
----@return mt.vector|nil rotation Relative rotation in degrees.
+---@return mt.Vector|nil position Relative position.
+---@return mt.Vector|nil rotation Relative rotation in degrees.
 ---@return boolean|nil forced_visible Should appear in first person?
 function ObjectRef:get_attach() end
 
@@ -7515,13 +7515,13 @@ function ObjectRef:get_children() end
 function ObjectRef:set_detach() end
 
 ---@param bone string|nil `""` The root bone.
----@param position mt.vector|nil `{x=0, y=0, z=0}` Relative position.
----@param rotation mt.vector|nil `{x=0, y=0, z=0}`
+---@param position mt.Vector|nil `{x=0, y=0, z=0}` Relative position.
+---@param rotation mt.Vector|nil `{x=0, y=0, z=0}`
 function ObjectRef:set_bone_position(bone, position, rotation) end
 
 ---* Returns position and rotation of the bone.
 ---@param bone string
----@return mt.vector position, mt.vector rotation
+---@return mt.Vector position, mt.Vector rotation
 function ObjectRef:get_bone_position(bone) end
 
 ---@param property_table table
@@ -7533,17 +7533,17 @@ function ObjectRef:get_properties() end
 ---@return boolean
 function ObjectRef:is_player() end
 
----@class mt.nametag_attributes
+---@class mt.NameTagAttributes
 ---@field text string|nil
 ---@field color mt.ColorSpec|nil
 ---@field bgcolor mt.ColorSpec|nil
 
 ---* Returns a table with the attributes of the nametag of an object.
----@return mt.nametag_attributes
+---@return mt.NameTagAttributes
 function ObjectRef:get_nametag_attributes() end
 
 ---* Sets the attributes of the nametag of an object.
----@param attrs mt.nametag_attributes
+---@param attrs mt.NameTagAttributes
 function ObjectRef:set_nametag_attributes(attrs) end
 
 ---#### Lua entity only (no-op for other objects)
@@ -7557,22 +7557,22 @@ local LuaObjectRef = {}
 ---  no effect and returning `nil`.
 function LuaObjectRef:remove() end
 
----@param vel mt.vector|mt.SimpleVector
+---@param vel mt.Vector|mt.VectorSimple
 function LuaObjectRef:set_velocity(vel) end
 
----@param acc mt.vector|mt.SimpleVector
+---@param acc mt.Vector|mt.VectorSimple
 function LuaObjectRef:set_acceleration(acc) end
 
----@return mt.vector
+---@return mt.Vector
 function LuaObjectRef:get_acceleration() end
 
 ---* X is pitch (elevation), Y is yaw (heading) and Z is roll (bank).
 ---* Does not reset rotation incurred through `automatic_rotate`.
 ---* Remove & read your objects to force a certain rotation.
----@param rot mt.vector (radians)
+---@param rot mt.Vector (radians)
 function LuaObjectRef:set_rotation(rot) end
 
----@return mt.vector (radians)
+---@return mt.Vector (radians)
 function LuaObjectRef:get_rotation() end
 
 ---* Sets the yaw in radians (heading).
@@ -7624,16 +7624,16 @@ function PlayerObjectRef:get_player_name() end
 
 ---* **DEPRECATED**, use get_velocity() instead.
 ---@deprecated
----@return mt.vector
+---@return mt.Vector
 function PlayerObjectRef:get_player_velocity() end
 
 ---* **DEPRECATED**, use add_velocity(vel) instead.
 ---@deprecated
----@param vel mt.vector|mt.SimpleVector
+---@param vel mt.Vector|mt.VectorSimple
 function PlayerObjectRef:add_player_velocity(vel) end
 
 ---* Get camera direction as a unit vector.
----@return mt.vector
+---@return mt.Vector
 function PlayerObjectRef:get_look_dir() end
 
 ---* Pitch in radians.
@@ -7766,7 +7766,7 @@ function PlayerObjectRef:get_player_control() end
 ---@return number
 function PlayerObjectRef:get_player_control_bits() end
 
----@class mt.physics_override
+---@class mt.PhysicsOverride
 ---@field speed number|nil `1` Multiplier to default walking speed value.
 ---@field jump number|nil `1` Multiplier to default jump value.
 ---@field gravity number|nil `1` Multiplier to default gravity value.
@@ -7774,11 +7774,11 @@ function PlayerObjectRef:get_player_control_bits() end
 ---@field sneak_glitch boolean|nil `false` Whether player can use the new move code replications of the old sneak side-effects: sneak ladders and 2 node sneak jump.
 ---@field new_move boolean|nil `true` Use new move/sneak code. When false the exact old code is used for the specific old sneak behavior.
 
---- @param override_table mt.physics_override
+--- @param override_table mt.PhysicsOverride
 function PlayerObjectRef:set_physics_override(override_table) end
 
 ---* Returns the table given to `set_physics_override`.
----@return mt.physics_override
+---@return mt.PhysicsOverride
 function PlayerObjectRef:get_physics_override() end
 
 ---* Add a HUD element described by HUD def, returns ID number on success.
@@ -7803,7 +7803,7 @@ function PlayerObjectRef:hud_change(id, stat, value) end
 ---@return mt.HUD
 function PlayerObjectRef:hud_get(id) end
 
----@class mt.HUDflags
+---@class mt.HUDFlags
 ---@field hotbar boolean|nil
 ---@field healthbar boolean|nil
 ---@field crosshair boolean|nil
@@ -7817,11 +7817,11 @@ function PlayerObjectRef:hud_get(id) end
 ---@field basic_debug boolean|nil
 
 ---* Sets specified HUD flags of player.
----@param flags mt.HUDflags If a flag equals `nil`, the flag is not modified.
+---@param flags mt.HUDFlags If a flag equals `nil`, the flag is not modified.
 function PlayerObjectRef:hud_set_flags(flags) end
 
 ---* `hud_get_flags()`: returns a table of player HUD flags with boolean values.
----@return mt.HUDflags
+---@return mt.HUDFlags
 function PlayerObjectRef:hud_get_flags() end
 
 ---* Sets number of items in builtin hotbar.
@@ -7864,12 +7864,12 @@ function PlayerObjectRef:set_minimap_modes(modes, selected_mode) end
 ---* The presence of the function `set_sun`, `set_moon` or `set_stars` indicates
 ---  whether `set_sky` accepts this format. Check the legacy format otherwise.
 ---* Passing no arguments resets the sky to its default values.
----@param sky_parameters mt.sky_parameters|nil
+---@param sky_parameters mt.SkyParameters|nil
 ---@overload fun(base_color: mt.ColorSpec|nil, type:string|nil, textures:table|nil, clouds:boolean|nil) **Deprecated**.
 function PlayerObjectRef:set_sky(sky_parameters) end
 
 --- A table used in regular sky_parameters type only (alpha is ignored)
----@class mt.sky_color
+---@class mt.SkyColor
 ---`#61b5f5` For the top half of the sky during the day.
 ---@field day_sky mt.ColorSpec|nil
 ---`#90d3f6` For the bottom half of the sky during the day.
@@ -7891,7 +7891,7 @@ function PlayerObjectRef:set_sky(sky_parameters) end
 ---`"default"` Changes which mode the directional fog.
 ---@field fog_tint_type `"custom"`|`"default"`|nil
 
----@class mt.sky_parameters
+---@class mt.SkyParameters
 ---Changes fog in "skybox" and "plain".
 ---@field base_color mt.ColorSpec|nil `#ffffff`
 ---`"regular"` Uses `0 | 6 | 0` textures, `base_color`
@@ -7901,7 +7901,7 @@ function PlayerObjectRef:set_sky(sky_parameters) end
 ---Y- (bottom), X- (west), X+ (east), Z+ (north), Z- (south).
 ---@field textures table|nil
 ---@field clouds boolean|nil `true` Boolean for whether clouds appear.
----@field sky_color mt.sky_color
+---@field sky_color mt.SkyColor
 
 ---* `get_sky(as_table)`:
 ---* `as_table`: boolean that determines whether the deprecated version of this
@@ -7910,16 +7910,16 @@ function PlayerObjectRef:set_sky(sky_parameters) end
 ---  * Deprecated: `false` or `nil` returns base_color, type, table of textures,
 ---  clouds.
 ---@param as_table boolean|nil
----@return mt.ColorSpec|mt.sky_parameters, string|nil, string[]|nil, boolean|nil
+---@return mt.ColorSpec|mt.SkyParameters, string|nil, string[]|nil, boolean|nil
 function PlayerObjectRef:get_sky(as_table) end
 
 ---* Deprecated: Use `get_sky(as_table)` instead.
 ---* Returns a table with the `sky_color` parameters as in `set_sky`.
 ---@deprecated
----@return mt.sky_color
+---@return mt.SkyColor
 function get_sky_color() end
 
----@class mt.sun_parameters
+---@class mt.SunParameters
 ---@field visible boolean|nil `true` Whether the sun is visible.
 ---@field texture string|nil `"sun.png"` A regular texture for the sun. Setting to `""` will re-enable the mesh sun. The texture appears non-rotated at sunrise and rotated 180 degrees (upside down) at sunset.
 ---@field tonemap string|nil `"sun_tonemap.png"` A 512x1 texture containing the tonemap for the sun
@@ -7928,28 +7928,28 @@ function get_sky_color() end
 ---@field scale number|nil `1` Overall size of the sun. For legacy reasons, the sun is bigger than the moon by a factor of about `1.57` for equal `scale` values.
 
 ---* Passing no arguments resets the sun to its default values.
----@param sun_parameters mt.sun_parameters|nil
+---@param sun_parameters mt.SunParameters|nil
 function PlayerObjectRef:set_sun(sun_parameters) end
 
 ---* Returns a table with the current sun parameters as in `set_sun`.
----@return mt.sun_parameters
+---@return mt.SunParameters
 function PlayerObjectRef:get_sun() end
 
----@class mt.moon_parameters
+---@class mt.MoonParameters
 ---@field visible boolean|nil `true` Whether the moon is visible.
 ---@field texture string|nil `"moon.png"` A regular texture for the moon. Setting to `""` will re-enable the mesh moon. The texture appears non-rotated at sunrise / moonset and rotated 180 degrees (upside down) at sunset / moonrise. Note: Relative to the sun, the moon texture is hence rotated by 180°. You can use the `^[transformR180` texture modifier to achieve the same orientation.
 ---@field tonemap string|nil `"moon_tonemap.png"` A 512x1 texture containing the tonemap for the moon.
 ---@field scale number|nil `1` Controlling the overall size of the moon. Note: For legacy reasons, the sun is bigger than the moon by a factor of about `1.57` for equal `scale` values.
 
 ---* Passing no arguments resets the moon to its default values.
----@param moon_parameters mt.moon_parameters
+---@param moon_parameters mt.MoonParameters
 function PlayerObjectRef:set_moon(moon_parameters) end
 
 ---* Returns a table with the current moon parameters as in `set_moon`.
----@return mt.moon_parameters
+---@return mt.MoonParameters
 function PlayerObjectRef:get_moon() end
 
----@class mt.star_parameters
+---@class mt.StarParameters
 ---@field visible boolean|nil `true` Whether the stars are visible.
 ---@field day_opacity number|nil `0.0` Maximum opacity of stars at day (maximum: 1.0; minimum: 0.0). No effect if `visible` is false.
 ---@field count integer|nil `1000` Set the number of stars in the skybox. Only applies to `"skybox"` and `"regular"` sky types.
@@ -7957,14 +7957,14 @@ function PlayerObjectRef:get_moon() end
 ---@field scale number|nil `1` Controlling the overall size of the stars.
 
 ---* Passing no arguments resets stars to their default values.
----@param star_parameters mt.star_parameters
+---@param star_parameters mt.StarParameters
 function PlayerObjectRef:set_stars(star_parameters) end
 
 ---* Returns a table with the current stars parameters as in `set_stars`.
----@return mt.star_parameters
+---@return mt.StarParameters
 function PlayerObjectRef:get_stars() end
 
----@class mt.cloud_parameters
+---@class mt.CloudParameters
 ---@field density number|nil `0.4` from `0` (no clouds) to `1` (full clouds).
 ---@field color mt.ColorSpec|nil `#fff0f0e5` Basic cloud color with alpha channel.
 ---@field ambient mt.ColorSpec|nil `#000000` Cloud color lower bound, use for a "glow at night" effect (alpha ignored).
@@ -7973,11 +7973,11 @@ function PlayerObjectRef:get_stars() end
 ---@field speed {x:number, z:number}|nil `{x=0, z=-2}`
 
 ---* Passing no arguments resets clouds to their default values.
----@param cloud_parameters mt.cloud_parameters
+---@param cloud_parameters mt.CloudParameters
 function PlayerObjectRef:set_clouds(cloud_parameters) end
 
 ---* Returns a table with the current cloud parameters as in `set_clouds`.
----@return mt.cloud_parameters
+---@return mt.CloudParameters
 function PlayerObjectRef:get_clouds() end
 
 ---* Overrides day-night ratio, controlling sunlight to a specific amount.
@@ -8007,32 +8007,32 @@ function PlayerObjectRef:get_local_animation() end
 
 ---* Defines offset vectors for camera per player.
 ---* in third person view max values are `{x=-10/10, y=-10,15, z=-5/5}`
----@param firstperson? mt.vector|mt.SimpleVector|nil `{x=0, y=0, z=0}`
----@param thirdperson? mt.vector|mt.SimpleVector|nil `{x=0, y=0, z=0}`
+---@param firstperson? mt.Vector|mt.VectorSimple|nil `{x=0, y=0, z=0}`
+---@param thirdperson? mt.Vector|mt.VectorSimple|nil `{x=0, y=0, z=0}`
 function PlayerObjectRef:set_eye_offset(firstperson, thirdperson) end
 
 ---* Returns first and third person offsets.
----@return mt.vector|nil, mt.vector|nil
+---@return mt.Vector|nil, mt.Vector|nil
 function get_eye_offset() end
 
 ---* Sends an already loaded mapblock to the player.
 ---* Returns `false` if nothing was sent (note that this can also mean that
 ---      the client already has the block)
 ---* Resource intensive - use sparsely
----@param blockpos mt.vector
+---@param blockpos mt.Vector
 ---@return unknown|boolean result False if failed.
 function PlayerObjectRef:send_mapblock(blockpos) end
 
----@class mt.light
+---@class mt.Light
 ---@field saturation number|nil This value has no effect on clients who have the "Tone Mapping" shader disabled.
 ---@field shadows {intensity: number|nil}|nil This value has no effect on clients who have the "Dynamic Shadows" shader disabled.
 
 ---* Sets lighting for the player.
----@param light_definition mt.light
+---@param light_definition mt.Light
 function set_lighting(light_definition) end
 
 ---* Returns the current state of lighting for the player.
----@return mt.light
+---@return mt.Light
 function get_lighting() end
 
 ---* `respawn()`: Respawns the player using the same mechanism as the death screen,
@@ -8611,7 +8611,7 @@ function respawn() end
 
 ---Used by `minetest.register_node`, `minetest.register_craftitem`, and
 ---`minetest.register_tool`.
----@class mt.item
+---@class mt.Item
 ---* Can contain new lines. "\n" has to be used as new line character.
 ---* See also: `get_description` in `ItemStack`
 ---@field description string
@@ -8621,25 +8621,25 @@ function respawn() end
 ---@field short_description string|nil
 ---* key = name, value = rating.
 ---* If rating not applicable, use 1.
----@field groups table<mt.groupname, integer>
+---@field groups table<mt.GroupName, integer>
 ---* Texture shown in the inventory GUI.
 ---* Defaults to a 3D rendering of the node if left empty.
----@field inventory_image mt.texture_string|nil
+---@field inventory_image mt.TextureString|nil
 ---* An overlay texture which is not affected by colorization.
----@field inventory_overlay mt.texture_string
+---@field inventory_overlay mt.TextureString
 ---* Texture shown when item is held in hand.
 ---* Defaults to a 3D rendering of the node if left empty.
----@field wield_image mt.texture_string
+---@field wield_image mt.TextureString
 ---* Like inventory_overlay but only used in the same situation as wield_image.
----@field wield_overlay mt.texture_string
+---@field wield_overlay mt.TextureString
 ---* Scale for the item when held in hand
----@field wield_scale mt.vector|mt.SimpleVector
+---@field wield_scale mt.Vector|mt.VectorSimple
 ---* An image file containing the palette of a node.
 ---* You can set the currently used color as the "palette_index" field of
 ---  the item stack metadata.
 ---* The palette is always stretched to fit indexes between 0 and 255, to
 ---  ensure compatibility with "colorfacedir" (and similar) nodes.
----@field palette mt.texture_string
+---@field palette mt.TextureString
 ---* Color the item is colorized with. The palette overrides this.
 ---@field color mt.ColorString
 ---* Maximum amount of items that can be in a single stack.
@@ -8662,7 +8662,7 @@ function respawn() end
 --- suitable groupcap using the formula "uses * 3^(maxlevel - 1)".
 --- It is recommend to set this explicitly instead of relying on the
 --- fallback behavior.
----@field tool_capabilities mt.tool_capabilities
+---@field tool_capabilities mt.ToolCapabilities
 local item = {}
 
 ---@type integer|nil
@@ -10302,7 +10302,7 @@ end
 ---In versions before v5.6.0, particlespawner textures could only be specified as a single
 ---texture string. After v5.6.0, textures can now be specified as a table as well. This
 ---table contains options that allow simple animations to be applied to the texture.
----@class mt.texture_table
+---@class mt.TextureTable
 ---@field name string The texture specification string.
 ---@field scale number|{x:number, y:number} Scales the texture onscreen.
 local texture = {}
