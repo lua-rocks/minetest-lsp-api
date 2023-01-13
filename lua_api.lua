@@ -5344,14 +5344,14 @@ function minetest.register_tool(name, item) end
 ---@param item mt.Item
 function minetest.override_item(name, item) end
 
----* Unregisters the item from the engine, and deletes the entry with key
+---* Unregister the item from the engine, and deletes the entry with key
 ---  `name` from `minetest.registered_items` and from the associated item table
 ---  according to its nature: `minetest.registered_nodes`, etc.
 ---@param name string
 function minetest.unregister_item(name) end
 
 ---@param name string
----@param entity mt.entity
+---@param entity mt.Entity
 function minetest.register_entity(name, entity) end
 
 ---@param abm mc.ActiveBlockModifier
@@ -5361,17 +5361,17 @@ function minetest.register_abm(abm) end
 function minetest.register_lbm(name, lbm) end
 
 ---* The order of ore registrations determines the order of ore generation.
----@param ore mt.ore
+---@param ore mt.Ore
 ---@return integer handle Uniquely identifying the registered ore on success.
 function minetest.register_ore(ore) end
 
 ---* To get the biome ID, use `minetest.get_biome_id`.
----@param biome mt.biome
+---@param biome mt.Biome
 ---@return integer handle Uniquely identifying the registered biome on success.
 function minetest.register_biome(biome) end
 
 ---* `minetest.unregister_biome(name)`
----* Unregisters the biome from the engine, and deletes the entry with key
+---* Unregister the biome from the engine, and deletes the entry with key
 ---      `name` from `minetest.registered_biomes`.
 ---* Warning: This alters the biome to biome ID correspondences, so any
 ---      decorations or ores using the 'biomes' field must afterwards be cleared
@@ -5420,7 +5420,7 @@ function minetest.register_biome(biome) end
 ---* `minetest.override_chatcommand(name, redefinition)`
 ---* Overrides fields of a chatcommand registered with `register_chatcommand`.
 ---* `minetest.unregister_chatcommand(name)`
----* Unregisters a chatcommands registered with `register_chatcommand`.
+---* Unregister a chatcommands registered with `register_chatcommand`.
 ---* `minetest.register_privilege(name, definition)`
 ---* `definition` can be a description or a definition table (see [Privilege
 ---      definition]).
@@ -7602,7 +7602,7 @@ function LuaObjectRef:get_texture_mod() end
 ---  * Fifth column:  subject viewed from above
 ---  * Sixth column:  subject viewed from below
 ---@param start_frame {x: number, y: number}|nil `{x=0, y=0}` The coordinate of the first frame.
----@param num_frames number|nil `1` Total frames in the tecture.
+---@param num_frames number|nil `1` Total frames in the texture.
 ---@param framelength number|nil `0.2` Time per animated frame in seconds.
 ---@param select_x_by_camera boolean|nil `false` Only for visual = `sprite`. Changes the frame `x` position according to the view direction.
 function LuaObjectRef:set_sprite(start_frame, num_frames, framelength, select_x_by_camera) end
@@ -10493,7 +10493,7 @@ function AuthHandler.reload() end
 ---Bit Library
 --------------
 ---
----Functions: bit.tobit, bit.tohex, bit.bnot, bit.band, bit.bor, bit.bxor, bit.lshift, bit.rshift, bit.---arshift, bit.rol, bit.ror, bit.bswap
+---Functions: bit.tobit, bit.tohex, bit.bnot, bit.band, bit.bor, bit.bxor, bit.lshift, bit.rshift, bit.arshift, bit.rol, bit.ror, bit.bswap
 ---
 ---See http://bitop.luajit.org/ for advanced information.
 ---
