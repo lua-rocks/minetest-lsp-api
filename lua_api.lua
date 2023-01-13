@@ -5328,31 +5328,48 @@ function minetest.log(level, text) end
 ---
 ---### Environment
 
----* `minetest.register_craftitem(name, item definition)`
 ---@param name string
 ---@param item mt.item
 function minetest.register_craftitem(name, item) end
 
----* `minetest.register_tool(name, item definition)`
----* `minetest.override_item(name, redefinition)`
+---@param name string
+---@param item mt.item
+function minetest.register_tool(name, item) end
+
 ---* Overrides fields of an item registered with register_node/tool/craftitem.
 ---* Note: Item must already be defined, (opt)depend on the mod defining it.
 ---* Example: `minetest.override_item("default:mese",
----      {light_source=minetest.LIGHT_MAX})`
----* `minetest.unregister_item(name)`
+---  {light_source=minetest.LIGHT_MAX})`
+---@param name string
+---@param item mt.item
+function minetest.override_item(name, item) end
+
 ---* Unregisters the item from the engine, and deletes the entry with key
----      `name` from `minetest.registered_items` and from the associated item table
----      according to its nature: `minetest.registered_nodes`, etc.
----* `minetest.register_entity(name, entity definition)`
----* `minetest.register_abm(abm definition)`
----* `minetest.register_lbm(lbm definition)`
----* `minetest.register_ore(ore definition)`
----* Returns an integer object handle uniquely identifying the registered
----      ore on success.
+---  `name` from `minetest.registered_items` and from the associated item table
+---  according to its nature: `minetest.registered_nodes`, etc.
+---@param name string
+function minetest.unregister_item(name) end
+
+---@param name string
+---@param entity mt.entity
+function minetest.register_entity(name, entity) end
+
+---@param abm mc.ActiveBlockModifier
+function minetest.register_abm(abm) end
+
+---@param lbm mc.LoadingBlockModifier
+function minetest.register_lbm(name, lbm) end
+
 ---* The order of ore registrations determines the order of ore generation.
----* `minetest.register_biome(biome definition)`
----* Returns an integer object handle uniquely identifying the registered
----      biome on success. To get the biome ID, use `minetest.get_biome_id`.
+---@param ore mt.ore
+---@return integer handle Uniquely identifying the registered ore on success.
+function minetest.register_ore(ore) end
+
+---* To get the biome ID, use `minetest.get_biome_id`.
+---@param biome mt.biome
+---@return integer handle Uniquely identifying the registered biome on success.
+function minetest.register_biome(biome) end
+
 ---* `minetest.unregister_biome(name)`
 ---* Unregisters the biome from the engine, and deletes the entry with key
 ---      `name` from `minetest.registered_biomes`.
