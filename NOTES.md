@@ -6,6 +6,7 @@
   and ended with a period.
 - Don't use the `definition` word in the class/alias names -- they are
   definitions by default.
+- If you don't sure about variable type, set it to `unknown`.
 - Optional params and fields format:
   ```lua
   ---@param name type|nil `default value` description

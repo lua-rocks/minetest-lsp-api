@@ -5482,16 +5482,18 @@ function minetest.register_on_placenode(cb) end
 ---@param cb fun(pos: mt.Vector, oldnode: mt.Node, digger: mt.ObjectRef|nil)
 function minetest.register_on_dignode(cb) end
 
----* Called when a node is punched
+---* Called when a node is punched.
 ---@param cb fun(pos:mt.Vector, node:mt.Node, puncher:mt.ObjectRef, pointed_thing:mt.PointedThing)
 function minetest.register_on_punchnode(cb) end
 
----* `minetest.register_on_generated(function(minp, maxp, blockseed))`
----* Called after generating a piece of world. Modifying nodes inside the area
----      is a bit faster than usual.
+---* Called after generating a piece of world. Modifying nodes inside the area.
+---  is a bit faster than usual.
+---@param cb fun(minp: mt.Vector, maxp: mt.Vector, blockseed: unknown)
+function minetest.register_on_generated(cb) end
 
----* `minetest.register_on_newplayer(function(ObjectRef))`
----* Called when a new player enters the world for the first time
+---* Called when a new player enters the world for the first time.
+---@param cb fun(player: mt.PlayerObjectRef)
+function minetest.register_on_newplayer(cb) end
 
 ---* `minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, tool_capabilities, ---dir, damage))`
 ---* Called when a player is punched
