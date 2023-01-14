@@ -1,4 +1,5 @@
 ---@meta
+---@diagnostic disable: unused-local
 ---@diagnostic disable: redefined-local
 -- luacheck: ignore
 
@@ -1434,10 +1435,7 @@ local node = {}
 ---  nodepos = blockpos * 16
 ---* Maximum:
 ---  nodepos = blockpos * 16 + 15
----
----
----
----
+
 ---HUD
 ---===
 
@@ -2572,7 +2570,6 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 ---    list[current_player;craftpreview;7,1;1,1;]
 ---
 ---@alias mt.FormSpec string
----
 ---* Set the formspec version to a certain number. If not specified,
 ---  version 1 is assumed.
 ---* Must be specified before `size` element.
@@ -5370,55 +5367,69 @@ function minetest.register_ore(ore) end
 ---@return integer handle Uniquely identifying the registered biome on success.
 function minetest.register_biome(biome) end
 
----* `minetest.unregister_biome(name)`
 ---* Unregister the biome from the engine, and deletes the entry with key
----      `name` from `minetest.registered_biomes`.
+---  `name` from `minetest.registered_biomes`.
 ---* Warning: This alters the biome to biome ID correspondences, so any
----      decorations or ores using the 'biomes' field must afterwards be cleared
----      and re-registered.
----* `minetest.register_decoration(decoration definition)`
----* Returns an integer object handle uniquely identifying the registered
----      decoration on success. To get the decoration ID, use
----      `minetest.get_decoration_id`.
+---  decorations or ores using the 'biomes' field must afterwards be cleared
+---  and re-registered.
+---@param name string
+function minetest.unregister_biome(name) end
+
+---* To get the decoration ID, use `minetest.get_decoration_id`.
 ---* The order of decoration registrations determines the order of decoration
----      generation.
----* `minetest.register_schematic(schematic definition)`
----* Returns an integer object handle uniquely identifying the registered
----      schematic on success.
----* If the schematic is loaded from a file, the `name` field is set to the
----      filename.
+---  generation.
+---@param decoration mt.Decoration
+---@return integer handle Uniquely identifying the registered biome on success.
+function minetest.register_decoration(decoration) end
+
+---* If the schematic is loaded from a file, the `name` field is set to the filename.
 ---* If the function is called when loading the mod, and `name` is a relative
----      path, then the current mod path will be prepended to the schematic
----      filename.
----* `minetest.clear_registered_biomes()`
+---  path, then the current mod path will be prepended to the schematic filename.
+---@param schematic mt.Schematic
+---@return integer handle Uniquely identifying the registered biome on success.
+function minetest.register_schematic(schematic) end
+
 ---* Clears all biomes currently registered.
 ---* Warning: Clearing and re-registering biomes alters the biome to biome ID
----      correspondences, so any decorations or ores using the 'biomes' field must
----      afterwards be cleared and re-registered.
----* `minetest.clear_registered_decorations()`
+---  correspondences, so any decorations or ores using the 'biomes' field must
+---  afterwards be cleared and re-registered.
+function minetest.clear_registered_biomes() end
+
 ---* Clears all decorations currently registered.
----* `minetest.clear_registered_ores()`
+function minetest.clear_registered_decorations() end
+
 ---* Clears all ores currently registered.
----* `minetest.clear_registered_schematics()`
+function minetest.clear_registered_ores() end
+
 ---* Clears all schematics currently registered.
----
+function minetest.clear_registered_schematics() end
+
 ---### Gameplay
----
----* `minetest.register_craft(recipe)`
----* Check recipe table syntax for different types below.
----* `minetest.clear_craft(recipe)`
+
+---@param recipe mt.CraftRecipe
+function register_craft(recipe) end
+
 ---* Will erase existing craft based either on output item or on input recipe.
 ---* Specify either output or input only. If you specify both, input will be
----      ignored. For input use the same recipe table syntax as for
----      `minetest.register_craft(recipe)`. For output specify only the item,
----      without a quantity.
+---  ignored. For input use the same recipe table syntax as for
+---  `minetest.register_craft(recipe)`. For output specify only the item,
+---  without a quantity.
 ---* Returns false if no erase candidate could be found, otherwise returns true.
 ---* **Warning**! The type field ("shaped", "cooking" or any other) will be
----      ignored if the recipe contains output. Erasing is then done independently
----      from the crafting method.
----* `minetest.register_chatcommand(cmd, chatcommand definition)`
----* `minetest.override_chatcommand(name, redefinition)`
+---  ignored if the recipe contains output. Erasing is then done independently
+---  from the crafting method.
+---@param recipe mt.CraftRecipe
+function clear_craft(recipe) end
+
+---@param name string
+---@param cmd mt.ChatCommand
+function register_chatcommand(name, cmd) end
+
 ---* Overrides fields of a chatcommand registered with `register_chatcommand`.
+---@param name string
+---@param cmd mt.ChatCommand
+function override_chatcommand(name, cmd) end
+
 ---* `minetest.unregister_chatcommand(name)`
 ---* Unregister a chatcommands registered with `register_chatcommand`.
 ---* `minetest.register_privilege(name, definition)`

@@ -13,10 +13,14 @@
   original .txt file is easy to update in .lua file.
 - Don't use the `definition` word in the class/alias names -- they are
   definitions by default.
+- Optional params and fields format:
+  ```lua
+  ---@param name type|nil `default value`
+  ```
 
 ## Temporary notes and bookmarks
 
-Current topic: `Environment` (everything above except from list below is ready).
+Current topic: `Gameplay` (everything above except from list below is ready).
 
 ## Temporary Skipped topics
 
