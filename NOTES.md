@@ -15,7 +15,7 @@
   definitions by default.
 - Optional params and fields format:
   ```lua
-  ---@param name type|nil `default value`
+  ---@param name type|nil `default value` description
   ```
 
 ## Temporary notes and bookmarks

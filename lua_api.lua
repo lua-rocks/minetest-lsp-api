@@ -5430,40 +5430,61 @@ function register_chatcommand(name, cmd) end
 ---@param cmd mt.ChatCommand
 function override_chatcommand(name, cmd) end
 
----* `minetest.unregister_chatcommand(name)`
 ---* Unregister a chatcommands registered with `register_chatcommand`.
----* `minetest.register_privilege(name, definition)`
----* `definition` can be a description or a definition table (see [Privilege
----      definition]).
+---@param name string
+function unregister_chatcommand(name) end
+
+---* `priv` can be a description or a definition table.
 ---* If it is a description, the priv will be granted to singleplayer and admin
----      by default.
+---  by default.
 ---* To allow players with `basic_privs` to grant, see the `basic_privs`
----      minetest.conf setting.
----* `minetest.register_authentication_handler(authentication handler definition)`
+---  minetest.conf setting.
+---@param name string
+---@param priv unknown|mt.Privilege
+function minetest.register_privilege(name, priv) end
+
 ---* Registers an auth handler that overrides the builtin one.
 ---* This function can be called by a single mod once only.
----
+---@param handler mt.AuthHandler
+function minetest.register_authentication_handler(handler) end
+
 ---Global callback registration functions
 -----------------------------------------
 ---
 ---Call these functions only at load time!
----
----* `minetest.register_globalstep(function(dtime))`
+
 ---* Called every server step, usually interval of 0.1s
----* `minetest.register_on_mods_loaded(function())`
----* Called after mods have finished loading and before the media is cached or the
----      aliases handled.
----* `minetest.register_on_shutdown(function())`
----* Called before server shutdown
+---@param cb fun(dtime: number)
+function minetest.register_globalstep(cb) end
+
+---* Called after mods have finished loading and before the media is cached
+---  or the aliases handled.
+---@param cb function
+function minetest.register_on_mods_loaded(cb) end
+
+---* Called before server shutdown.
 ---* **Warning**: If the server terminates abnormally (i.e. crashes), the
----      registered callbacks **will likely not be run**. Data should be saved at
----      semi-frequent intervals as well as on server shutdown.
----* `minetest.register_on_placenode(function(pos, newnode, placer, oldnode, itemstack, pointed_thing))`
----* Called when a node has been placed
----* If return `true` no item is taken from `itemstack`
----* `placer` may be any valid ObjectRef or nil.
+---  registered callbacks **will likely not be run**. Data should be saved at
+---  semi-frequent intervals as well as on server shutdown.
+---@param cb function
+function minetest.register_on_shutdown(cb) end
+
+---@class mt.OnPlaceNodeCallBack
+---@param pos mt.Vector
+---@param newnode mt.Node
+---@param placer mt.ObjectRef|nil
+---@param oldnode mt.Node
+---@param itemstack mt.ItemStack
+---@param thing mt.PointedThing
+---@return boolean|nil taken If return `true` no item is taken from `itemstack`.
+local function cb(pos, newnode, placer, oldnode, itemstack, thing) end
+
+---* Called when a node has been placed.
 ---* **Not recommended**; use `on_construct` or `after_place_node` in node
----      definition whenever possible.
+---  definition whenever possible.
+---@param cb mt.OnPlaceNodeCallBack
+function minetest.register_on_placenode(cb) end
+
 ---* `minetest.register_on_dignode(function(pos, oldnode, digger))`
 ---* Called when a node has been dug.
 ---* **Not recommended**; Use `on_destruct` or `after_dig_node` in node
