@@ -24,6 +24,7 @@
     "voronoi",
     "ylisce",
     "yslice",
-    "Zstandard"
+    "Zstandard",
+    "zstd"
   ]
 }

@@ -5485,17 +5485,23 @@ local function cb(pos, newnode, placer, oldnode, itemstack, thing) end
 ---@param cb mt.OnPlaceNodeCallBack
 function minetest.register_on_placenode(cb) end
 
----* `minetest.register_on_dignode(function(pos, oldnode, digger))`
 ---* Called when a node has been dug.
 ---* **Not recommended**; Use `on_destruct` or `after_dig_node` in node
----      definition whenever possible.
+---  definition whenever possible.
+---@deprecated
+---@param cb fun(pos: mt.Vector, oldnode: mt.Node, digger: mt.ObjectRef|nil)
+function minetest.register_on_dignode(cb) end
+
 ---* `minetest.register_on_punchnode(function(pos, node, puncher, pointed_thing))`
 ---* Called when a node is punched
+
 ---* `minetest.register_on_generated(function(minp, maxp, blockseed))`
 ---* Called after generating a piece of world. Modifying nodes inside the area
 ---      is a bit faster than usual.
+
 ---* `minetest.register_on_newplayer(function(ObjectRef))`
 ---* Called when a new player enters the world for the first time
+
 ---* `minetest.register_on_punchplayer(function(player, hitter, time_from_last_punch, tool_capabilities, ---dir, damage))`
 ---* Called when a player is punched
 ---* Note: This callback is invoked even if the punched player is dead.
@@ -5508,11 +5514,13 @@ function minetest.register_on_placenode(cb) end
 ---      the puncher to the punched.
 ---* `damage`: Number that represents the damage calculated by the engine
 ---* should return `true` to prevent the default damage mechanism
+
 ---* `minetest.register_on_rightclickplayer(function(player, clicker))`
 ---* Called when the 'place/use' key was used while pointing a player
 ---      (not necessarily an actual rightclick)
 ---* `player`: ObjectRef - Player that is acted upon
 ---* `clicker`: ObjectRef - Object that acted upon `player`, may or may not be a player
+
 ---* `minetest.register_on_player_hpchange(function(player, hp_change, reason), modifier)`
 ---* Called when the player gets damaged or healed
 ---* `player`: ObjectRef of the player
@@ -5533,31 +5541,39 @@ function minetest.register_on_placenode(cb) end
 ---       Note: modifiers only get a temporary `hp_change` that can be modified by later modifiers.
 ---       Modifiers can return true as a second argument to stop the execution of further functions.
 ---       Non-modifiers receive the final HP change calculated by the modifiers.
+
 ---* `minetest.register_on_dieplayer(function(ObjectRef, reason))`
 ---* Called when a player dies
 ---* `reason`: a PlayerHPChangeReason table, see register_on_player_hpchange
+
 ---* `minetest.register_on_respawnplayer(function(ObjectRef))`
 ---* Called when player is to be respawned
 ---* Called _before_ repositioning of player occurs
 ---* return true in func to disable regular player placement
+
 ---* `minetest.register_on_prejoinplayer(function(name, ip))`
 ---* Called when a client connects to the server, prior to authentication
 ---* If it returns a string, the client is disconnected with that string as
 ---      reason.
+
 ---* `minetest.register_on_joinplayer(function(ObjectRef, last_login))`
 ---* Called when a player joins the game
 ---* `last_login`: The timestamp of the previous login, or nil if player is new
+
 ---* `minetest.register_on_leaveplayer(function(ObjectRef, timed_out))`
 ---* Called when a player leaves the game
 ---* `timed_out`: True for timeout, false for other reasons.
+
 ---* `minetest.register_on_authplayer(function(name, ip, is_success))`
 ---* Called when a client attempts to log into an account.
 ---* `name`: The name of the account being authenticated.
 ---* `ip`: The IP address of the client
 ---* `is_success`: Whether the client was successfully authenticated
 ---* For newly registered accounts, `is_success` will always be true
+
 ---* `minetest.register_on_auth_fail(function(name, ip))`
 ---* Deprecated: use `minetest.register_on_authplayer(name, ip, is_success)` instead.
+
 ---* `minetest.register_on_cheat(function(ObjectRef, cheat))`
 ---* Called when a player cheats
 ---* `cheat`: `{type=<cheat_type>}`, where `<cheat_type>` is one of:
@@ -5568,15 +5584,18 @@ function minetest.register_on_placenode(cb) end
 ---        * `finished_unknown_dig`
 ---        * `dug_unbreakable`
 ---        * `dug_too_fast`
+
 ---* `minetest.register_on_chat_message(function(name, message))`
 ---* Called always when a player says something
 ---* Return `true` to mark the message as handled, which means that it will
 ---      not be sent to other players.
+
 ---* `minetest.register_on_chatcommand(function(name, command, params))`
 ---* Called always when a chatcommand is triggered, before `minetest.registered_chatcommands`
 ---      is checked to see if the command exists, but after the input is parsed.
 ---* Return `true` to mark the command as handled, which means that the default
 ---      handlers will be prevented.
+
 ---* `minetest.register_on_player_receive_fields(function(player, formname, fields))`
 ---* Called when the server received input from `player` in a formspec with
 ---      the given `formname`. Specifically, this is called on any of the
@@ -5615,6 +5634,7 @@ function minetest.register_on_placenode(cb) end
 ---          text field. See also: `field_close_on_enter`.
 ---* Newest functions are called first
 ---* If function returns `true`, remaining functions are not called
+
 ---* `minetest.register_on_craft(function(itemstack, player, old_craft_grid, craft_inv))`
 ---* Called when `player` crafts something
 ---* `itemstack` is the output
@@ -5623,9 +5643,11 @@ function minetest.register_on_placenode(cb) end
 ---* `craft_inv` is the inventory with the crafting grid
 ---* Return either an `ItemStack`, to replace the output, or `nil`, to not
 ---      modify it.
+
 ---* `minetest.register_craft_predict(function(itemstack, player, old_craft_grid, craft_inv))`
 ---* The same as before, except that it is called before the player crafts, to
 ---      make craft prediction, and it should not change anything.
+
 ---* `minetest.register_allow_player_inventory_action(function(player, action, inventory, inventory_info))`
 ---* Determines how much of a stack may be taken, put or moved to a
 ---      player inventory.
@@ -5638,10 +5660,12 @@ function minetest.register_on_placenode(cb) end
 ---        * `take`: Same as `put`
 ---* Return a numeric value to limit the amount of items to be taken, put or
 ---      moved. A value of `-1` for `take` will make the source stack infinite.
+
 ---* `minetest.register_on_player_inventory_action(function(player, action, inventory, inventory_info))`
 ---* Called after a take, put or move event from/to/in a player inventory
 ---* Function arguments: see `minetest.register_allow_player_inventory_action`
 ---* Does not accept or handle any return value.
+
 ---* `minetest.register_on_protection_violation(function(pos, name))`
 ---* Called by `builtin` and mods when a player violates protection at a
 ---      position (eg, digs a node or punches a protected entity).
@@ -5650,9 +5674,11 @@ function minetest.register_on_placenode(cb) end
 ---* The provided function should check that the position is protected by the
 ---      mod calling this function before it prints a message, if it does, to
 ---      allow for multiple protection mods.
+
 ---* `minetest.register_on_item_eat(function(hp_change, replace_with_item, itemstack, user, pointed_thing))---`
 ---* Called when an item is eaten, by `minetest.item_eat`
 ---* Return `itemstack` to cancel the default item eat response (i.e.: hp increase).
+
 ---* `minetest.register_on_item_pickup(function(itemstack, picker, pointed_thing, ---time_from_last_punch,  ...))`
 ---* Called by `minetest.item_pickup` before an item is picked up.
 ---* Function is added to `minetest.registered_on_item_pickups`.
@@ -5660,27 +5686,33 @@ function minetest.register_on_placenode(cb) end
 ---* Parameters are the same as in the `on_pickup` callback.
 ---* Return an itemstack to cancel the default item pick-up response (i.e.: adding
 ---      the item into inventory).
+
 ---* `minetest.register_on_priv_grant(function(name, granter, priv))`
 ---* Called when `granter` grants the priv `priv` to `name`.
 ---* Note that the callback will be called twice if it's done by a player,
 ---      once with granter being the player name, and again with granter being nil.
+
 ---* `minetest.register_on_priv_revoke(function(name, revoker, priv))`
 ---* Called when `revoker` revokes the priv `priv` from `name`.
 ---* Note that the callback will be called twice if it's done by a player,
 ---      once with revoker being the player name, and again with revoker being nil.
+
 ---* `minetest.register_can_bypass_userlimit(function(name, ip))`
 ---* Called when `name` user connects with `ip`.
 ---* Return `true` to by pass the player limit
+
 ---* `minetest.register_on_modchannel_message(function(channel_name, sender, message))`
 ---* Called when an incoming mod channel message is received
 ---* You should have joined some channels to receive events.
 ---* If message comes from a server mod, `sender` field is an empty string.
+
 ---* `minetest.register_on_liquid_transformed(function(pos_list, node_list))`
 ---* Called after liquid nodes (`liquidtype ~= "none"`) are modified by the
 ---      engine's liquid transformation process.
 ---* `pos_list` is an array of all modified positions.
 ---* `node_list` is an array of the old node that was previously at the position
 ---      with the corresponding index in pos_list.
+
 ---* `minetest.register_on_mapblocks_changed(function(modified_blocks, modified_block_count))`
 ---* Called soon after any nodes or node metadata have been modified. No
 ---      modifications will be missed, but there may be false positives.
@@ -5695,22 +5727,28 @@ function minetest.register_on_placenode(cb) end
 ---Setting-related
 ------------------
 ---
+
 ---* `minetest.settings`: Settings object containing all of the settings from the
 ---  main config file (`minetest.conf`).
+
 ---* `minetest.setting_get_pos(name)`: Loads a setting from the main settings and
 ---  parses it as a position (in the format `(1,2,3)`). Returns a position or nil.
 ---
 ---Authentication
 -----------------
 ---
+
 ---* `minetest.string_to_privs(str[, delim])`:
 ---* Converts string representation of privs into table form
 ---* `delim`: String separating the privs. Defaults to `","`.
 ---* Returns `{ priv1 = true, ... }`
+
 ---* `minetest.privs_to_string(privs[, delim])`:
 ---* Returns the string representation of `privs`
 ---* `delim`: String to delimit privs. Defaults to `","`.
+
 ---* `minetest.get_player_privs(name) -> {priv1=true,...}`
+
 ---* `minetest.check_player_privs(player_or_name, ...)`:
 ---  returns `bool, missing_privs`
 ---* A quickhand for checking privileges.
@@ -5718,6 +5756,7 @@ function minetest.register_on_placenode(cb) end
 ---* `...` is either a list of strings, e.g. `"priva", "privb"` or
 ---      a table, e.g. `{ priva = true, privb = true }`.
 ---
+
 ---* `minetest.check_password_entry(name, entry, password)`
 ---* Returns true if the "password entry" for a player with name matches given
 ---      password, false otherwise.
@@ -5725,6 +5764,7 @@ function minetest.register_on_placenode(cb) end
 ---      engine as returned as part of a `get_auth()` call on the auth handler.
 ---* Only use this function for making it possible to log in via password from
 ---      external protocols such as IRC, other uses are frowned upon.
+
 ---* `minetest.get_password_hash(name, raw_password)`
 ---* Convert a name-password pair to a password hash that Minetest can use.
 ---* The returned value alone is not a good basis for password checks based
@@ -5732,21 +5772,27 @@ function minetest.register_on_placenode(cb) end
 ---      from the function, with an externally provided password, as the hash
 ---      in the db might use the new SRP verifier format.
 ---* For this purpose, use `minetest.check_password_entry` instead.
+
 ---* `minetest.get_player_ip(name)`: returns an IP address string for the player
 ---  `name`.
 ---* The player needs to be online for this to be successful.
 ---
+
 ---* `minetest.get_auth_handler()`: Return the currently active auth handler
 ---* See the [Authentication handler definition]
 ---* Use this to e.g. get the authentication data for a player:
 ---      `local auth_data = minetest.get_auth_handler().get_auth(playername)`
+
 ---* `minetest.notify_authentication_modified(name)`
 ---* Must be called by the authentication handler for privilege changes.
 ---* `name`: string; if omitted, all auth data should be considered modified
+
 ---* `minetest.set_player_password(name, password_hash)`: Set password hash of
 ---  player `name`.
+
 ---* `minetest.set_player_privs(name, {priv1=true,...})`: Set privileges of player
 ---  `name`.
+
 ---* `minetest.auth_reload()`
 ---* See `reload()` in authentication handler definition
 ---
@@ -5757,24 +5803,29 @@ function minetest.register_on_placenode(cb) end
 ---Chat
 -------
 ---
+
 ---* `minetest.chat_send_all(text)`
+
 ---* `minetest.chat_send_player(name, text)`
+
 ---* `minetest.format_chat_message(name, message)`
 ---* Used by the server to format a chat message, based on the setting `chat_message_format`.
 ---      Refer to the documentation of the setting for a list of valid placeholders.
 ---* Takes player name and message, and returns the formatted string to be sent to players.
 ---* Can be redefined by mods if required, for things like colored names or messages.
 ---* **Only** the first occurrence of each placeholder will be replaced.
----
+
 ---Environment access
 ---------------------
----
+
 ---* `minetest.set_node(pos, node)`
+
 ---* `minetest.add_node(pos, node)`: alias to `minetest.set_node`
 ---* Set node at position `pos`
 ---* `node`: table `{name=string, param1=number, param2=number}`
 ---* If param1 or param2 is omitted, it's set to `0`.
 ---* e.g. `minetest.set_node({x=0, y=10, z=0}, {name="default:wood"})`
+
 ---* `minetest.bulk_set_node({pos1, pos2, pos3, ...}, node)`
 ---* Set node on all positions set in the first argument.
 ---* e.g. `minetest.bulk_set_node({{x=0, y=1, z=1}, {x=1, y=2, z=2}}, {name="default:stone"})`
@@ -5785,16 +5836,21 @@ function minetest.register_on_placenode(cb) end
 ---      in spread out positions which would cause LVMs to waste memory.
 ---      For setting a cube, this is 1.3x faster than set_node whereas LVM is 20
 ---      times faster.
+
 ---* `minetest.swap_node(pos, node)`
 ---* Set node at position, but don't remove metadata
+
 ---* `minetest.remove_node(pos)`
 ---* By default it does the same as `minetest.set_node(pos, {name="air"})`
+
 ---* `minetest.get_node(pos)`
 ---* Returns the node at the given position as table in the format
 ---      `{name="node_name", param1=0, param2=0}`,
 ---      returns `{name="ignore", param1=0, param2=0}` for unloaded areas.
+
 ---* `minetest.get_node_or_nil(pos)`
 ---* Same as `get_node` but returns `nil` for unloaded areas.
+
 ---* `minetest.get_node_light(pos, timeofday)`
 ---* Gets the light value at the given position. Note that the light value
 ---      "inside" the node at the given position is returned, so you usually want
@@ -5803,6 +5859,7 @@ function minetest.register_on_placenode(cb) end
 ---* `timeofday`: `nil` for current time, `0` for night, `0.5` for day
 ---* Returns a number between `0` and `15` or `nil`
 ---* `nil` is returned e.g. when the map isn't loaded at `pos`
+
 ---* `minetest.get_natural_light(pos[, timeofday])`
 ---* Figures out the sunlight (or moonlight) value at pos at the given time of
 ---      day.
@@ -5811,6 +5868,7 @@ function minetest.register_on_placenode(cb) end
 ---* Returns a number between `0` and `15` or `nil`
 ---* This function tests 203 nodes in the worst case, which happens very
 ---      unlikely
+
 ---* `minetest.get_artificial_light(param1)`
 ---* Calculates the artificial light (light from e.g. torches) value from the
 ---      `param1` value.
@@ -5818,49 +5876,64 @@ function minetest.register_on_placenode(cb) end
 ---* Returns a number between `0` and `15`
 ---* Currently it's the same as `math.floor(param1 / 16)`, except that it
 ---      ensures compatibility.
+
 ---* `minetest.place_node(pos, node)`
 ---* Place node with the same effects that a player would cause
 ---* `minetest.dig_node(pos)`
 ---* Dig node with the same effects that a player would cause
 ---* Returns `true` if successful, `false` on failure (e.g. protected location)
+
 ---* `minetest.punch_node(pos)`
 ---* Punch node with the same effects that a player would cause
+
 ---* `minetest.spawn_falling_node(pos)`
 ---* Change node into falling node
 ---* Returns `true` and the ObjectRef of the spawned entity if successful, `false` on failure
 ---
+
 ---* `minetest.find_nodes_with_meta(pos1, pos2)`
 ---* Get a table of positions of nodes that have metadata within a region
 ---      {pos1, pos2}.
+
 ---* `minetest.get_node_timer(pos)`
 ---* Get `NodeTimerRef`
----
+
 ---* `minetest.add_entity(pos, name, [staticdata])`: Spawn Lua-defined entity at
 ---  position.
 ---* Returns `ObjectRef`, or `nil` if failed
+
 ---* `minetest.add_item(pos, item)`: Spawn item
 ---* Returns `ObjectRef`, or `nil` if failed
+
 ---* `minetest.get_player_by_name(name)`: Get an `ObjectRef` to a player
+
 ---* `minetest.get_objects_inside_radius(pos, radius)`: returns a list of
 ---  ObjectRefs.
 ---* `radius`: using a Euclidean metric
+
 ---* `minetest.get_objects_in_area(pos1, pos2)`: returns a list of
 ---  ObjectRefs.
 ---     * `pos1` and `pos2` are the min and max positions of the area to search.
+
 ---* `minetest.set_timeofday(val)`
 ---* `val` is between `0` and `1`; `0` for midnight, `0.5` for midday
+
 ---* `minetest.get_timeofday()`
+
 ---* `minetest.get_gametime()`: returns the time, in seconds, since the world was
 ---  created.
+
 ---* `minetest.get_day_count()`: returns number days elapsed since world was
 ---  created.
 ---* accounts for time changes.
+
 ---* `minetest.find_node_near(pos, radius, nodenames, [search_center])`: returns
 ---  pos or `nil`.
 ---* `radius`: using a maximum metric
 ---* `nodenames`: e.g. `{"ignore", "group:tree"}` or `"default:dirt"`
 ---* `search_center` is an optional boolean (default: `false`)
 ---      If true `pos` is also checked for the nodes
+
 ---* `minetest.find_nodes_in_area(pos1, pos2, nodenames, [grouped])`
 ---* `pos1` and `pos2` are the min and max positions of the area to search.
 ---* `nodenames`: e.g. `{"ignore", "group:tree"}` or `"default:dirt"`
@@ -5871,20 +5944,25 @@ function minetest.register_on_placenode(cb) end
 ---      second value: Table with the count of each node with the node name
 ---      as index
 ---* Area volume is limited to 4,096,000 nodes
+
 ---* `minetest.find_nodes_in_area_under_air(pos1, pos2, nodenames)`: returns a
 ---  list of positions.
 ---* `nodenames`: e.g. `{"ignore", "group:tree"}` or `"default:dirt"`
 ---* Return value: Table with all node positions with a node air above
 ---* Area volume is limited to 4,096,000 nodes
+
 ---* `minetest.get_perlin(noiseparams)`
 ---* Return world-specific perlin noise.
 ---* The actual seed used is the noiseparams seed plus the world seed.
+
 ---* `minetest.get_perlin(seeddiff, octaves, persistence, spread)`
 ---* Deprecated: use `minetest.get_perlin(noiseparams)` instead.
 ---* Return world-specific perlin noise.
+
 ---* `minetest.get_voxel_manip([pos1, pos2])`
 ---* Return voxel manipulator object.
 ---* Loads the manipulator from the map if positions are passed.
+
 ---* `minetest.set_gen_notify(flags, {deco_ids})`
 ---* Set the types of on-generate notifications that should be collected.
 ---* `flags` is a flag field with the available flags:
@@ -5897,30 +5975,39 @@ function minetest.register_on_placenode(cb) end
 ---        * decoration
 ---* The second parameter is a list of IDs of decorations which notification
 ---      is requested for.
+
 ---* `minetest.get_gen_notify()`
 ---* Returns a flagstring and a table with the `deco_id`s.
+
 ---* `minetest.get_decoration_id(decoration_name)`
 ---* Returns the decoration ID number for the provided decoration name string,
 ---      or `nil` on failure.
+
 ---* `minetest.get_mapgen_object(objectname)`
 ---* Return requested mapgen object if available (see [Mapgen objects])
+
 ---* `minetest.get_heat(pos)`
 ---* Returns the heat at the position, or `nil` on failure.
+
 ---* `minetest.get_humidity(pos)`
 ---* Returns the humidity at the position, or `nil` on failure.
+
 ---* `minetest.get_biome_data(pos)`
 ---* Returns a table containing:
 ---        * `biome` the biome id of the biome at that position
 ---        * `heat` the heat at the position
 ---        * `humidity` the humidity at the position
 ---* Or returns `nil` on failure.
+
 ---* `minetest.get_biome_id(biome_name)`
 ---* Returns the biome id, as used in the biomemap Mapgen object and returned
 ---      by `minetest.get_biome_data(pos)`, for a given biome_name string.
+
 ---* `minetest.get_biome_name(biome_id)`
 ---* Returns the biome name string for the provided biome id, or `nil` on
 ---      failure.
 ---* If no biomes have been registered, such as in mgv6, returns `default`.
+
 ---* `minetest.get_mapgen_params()`
 ---* Deprecated: use `minetest.get_mapgen_setting(name)` instead.
 ---* Returns a table containing:
@@ -5929,6 +6016,7 @@ function minetest.register_on_placenode(cb) end
 ---        * `chunksize`
 ---        * `water_level`
 ---        * `flags`
+
 ---* `minetest.set_mapgen_params(MapgenParams)`
 ---* Deprecated: use `minetest.set_mapgen_setting(name, value, override)`
 ---      instead.
@@ -5945,6 +6033,7 @@ function minetest.register_on_placenode(cb) end
 ---      prefix `"no"` is attached, clears instead.
 ---* `flags` is in the same format and has the same options as `mg_flags` in
 ---      `minetest.conf`.
+
 ---* `minetest.get_mapgen_edges([mapgen_limit[, chunksize]])`
 ---* Returns the minimum and maximum possible generated node positions
 ---      in that order.
@@ -5952,6 +6041,7 @@ function minetest.register_on_placenode(cb) end
 ---      of the *active* mapgen setting `"mapgen_limit"`.
 ---* `chunksize` is an optional number. If it is absent, its value is that
 ---      of the *active* mapgen setting `"chunksize"`.
+
 ---* `minetest.get_mapgen_setting(name)`
 ---* Gets the *active* mapgen setting (or nil if none exists) in string
 ---      format with the following order of precedence:
@@ -5960,9 +6050,11 @@ function minetest.register_on_placenode(cb) end
 ---        2) Settings set by mods without a metafile override
 ---        3) Settings explicitly set in the user config file, minetest.conf
 ---        4) Settings set as the user config default
+
 ---* `minetest.get_mapgen_setting_noiseparams(name)`
 ---* Same as above, but returns the value as a NoiseParams table if the
 ---      setting `name` exists and is a valid NoiseParams.
+
 ---* `minetest.set_mapgen_setting(name, value, [override_meta])`
 ---* Sets a mapgen param to `value`, and will take effect if the corresponding
 ---      mapgen setting is not already present in map_meta.txt.
@@ -5970,24 +6062,30 @@ function minetest.register_on_placenode(cb) end
 ---      to true, the setting will become the active setting regardless of the map
 ---      metafile contents.
 ---* Note: to set the seed, use `"seed"`, not `"fixed_map_seed"`.
+
 ---* `minetest.set_mapgen_setting_noiseparams(name, value, [override_meta])`
 ---* Same as above, except value is a NoiseParams table.
+
 ---* `minetest.set_noiseparams(name, noiseparams, set_default)`
 ---* Sets the noiseparams setting of `name` to the noiseparams table specified
 ---      in `noiseparams`.
 ---* `set_default` is an optional boolean (default: `true`) that specifies
 ---      whether the setting should be applied to the default config or current
 ---      active config.
+
 ---* `minetest.get_noiseparams(name)`
 ---* Returns a table of the noiseparams for name.
+
 ---* `minetest.generate_ores(vm, pos1, pos2)`
 ---* Generate all registered ores within the VoxelManip `vm` and in the area
 ---      from `pos1` to `pos2`.
 ---* `pos1` and `pos2` are optional and default to mapchunk minp and maxp.
+
 ---* `minetest.generate_decorations(vm, pos1, pos2)`
 ---* Generate all registered decorations within the VoxelManip `vm` and in the
 ---      area from `pos1` to `pos2`.
 ---* `pos1` and `pos2` are optional and default to mapchunk minp and maxp.
+
 ---* `minetest.clear_objects([options])`
 ---* Clear all objects in the environment
 ---* Takes an optional table as an argument with the field `mode`.
@@ -5996,10 +6094,12 @@ function minetest.register_on_placenode(cb) end
 ---        * mode = `"quick"`: Clear objects immediately in loaded mapblocks,
 ---                            clear objects in unloaded mapblocks only when the
 ---                            mapblocks are next activated.
+
 ---* `minetest.load_area(pos1[, pos2])`
 ---* Load the mapblocks containing the area from `pos1` to `pos2`.
 ---      `pos2` defaults to `pos1` if not specified.
 ---* This function does not trigger map generation.
+
 ---* `minetest.emerge_area(pos1, pos2, [callback], [param])`
 ---* Queue all blocks in the area from `pos1` to `pos2`, inclusive, to be
 ---      asynchronously fetched from memory, loaded from disk, or if inexistent,
@@ -6020,14 +6120,17 @@ function minetest.register_on_placenode(cb) end
 ---          this one.
 ---        * `param` is the user-defined parameter passed to emerge_area (or
 ---          nil if the parameter was absent).
+
 ---* `minetest.delete_area(pos1, pos2)`
 ---* delete all mapblocks in the area from pos1 to pos2, inclusive
+
 ---* `minetest.line_of_sight(pos1, pos2)`: returns `boolean, pos`
 ---* Checks if there is anything other than air between pos1 and pos2.
 ---* Returns false if something is blocking the sight.
 ---* Returns the position of the blocking node when `false`
 ---* `pos1`: First position
 ---* `pos2`: Second position
+
 ---* `minetest.raycast(pos1, pos2, objects, liquids)`: returns `Raycast`
 ---* Creates a `Raycast` object.
 ---* `pos1`: start of the ray
@@ -6035,6 +6138,7 @@ function minetest.register_on_placenode(cb) end
 ---* `objects`: if false, only nodes will be returned. Default is `true`.
 ---* `liquids`: if false, liquid nodes (`liquidtype ~= "none"`) won't be
 ---                 returned. Default is `false`.
+
 ---* `minetest.find_path(pos1,pos2,searchdistance,max_jump,max_drop,algorithm)`
 ---* returns table containing path that can be walked on
 ---* returns a table of 3D points representing a path from `pos1` to `pos2` or
@@ -6055,21 +6159,28 @@ function minetest.register_on_placenode(cb) end
 ---      Difference between `"A*"` and `"A*_noprefetch"` is that
 ---      `"A*"` will pre-calculate the cost-data, the other will calculate it
 ---      on-the-fly
+
 ---* `minetest.spawn_tree (pos, {treedef})`
 ---* spawns L-system tree at given `pos` with definition in `treedef` table
+
 ---* `minetest.transforming_liquid_add(pos)`
 ---* add node to liquid flow update queue
+
 ---* `minetest.get_node_max_level(pos)`
 ---* get max available level for leveled node
+
 ---* `minetest.get_node_level(pos)`
 ---* get level of leveled node (water, snow)
+
 ---* `minetest.set_node_level(pos, level)`
 ---* set level of leveled node, default `level` equals `1`
 ---* if `totallevel > maxlevel`, returns rest (`total-max`).
+
 ---* `minetest.add_node_level(pos, level)`
 ---* increase level of leveled node by level, default `level` equals `1`
 ---* if `totallevel > maxlevel`, returns rest (`total-max`)
 ---* `level` must be between -127 and 127
+
 ---* `minetest.fix_light(pos1, pos2)`: returns `true`/`false`
 ---* resets the light in a cuboid-shaped part of
 ---      the map and removes lighting bugs.
@@ -6086,15 +6197,18 @@ function minetest.register_on_placenode(cb) end
 ---      might be removed.
 ---* returns `false` if the area is not fully generated,
 ---      `true` otherwise
+
 ---* `minetest.check_single_for_falling(pos)`
 ---* causes an unsupported `group:falling_node` node to fall and causes an
 ---      unattached `group:attached_node` node to fall.
 ---* does not spread these updates to neighbors.
+
 ---* `minetest.check_for_falling(pos)`
 ---* causes an unsupported `group:falling_node` node to fall and causes an
 ---      unattached `group:attached_node` node to fall.
 ---* spread these updates to neighbors and can cause a cascade
 ---      of nodes to fall.
+
 ---* `minetest.get_spawn_level(x, z)`
 ---* Returns a player spawn y co-ordinate for the provided (x, z)
 ---      co-ordinates, or `nil` for an unsuitable spawn point.
@@ -6104,26 +6218,28 @@ function minetest.register_on_placenode(cb) end
 ---* The spawn level returned is for a player spawn in unmodified terrain.
 ---* The spawn level is intentionally above terrain level to cope with
 ---      full-node biome 'dust' nodes.
----
+
 ---Mod channels
 ---------------
----
+
 ---You can find mod channels communication scheme in `doc/mod_channels.png`.
 ---
+
 ---* `minetest.mod_channel_join(channel_name)`
 ---* Server joins channel `channel_name`, and creates it if necessary. You
 ---      should listen for incoming messages with
 ---      `minetest.register_on_modchannel_message`
----
+
 ---Inventory
 ------------
----
+
 ---`minetest.get_inventory(location)`: returns an `InvRef`
 ---
 ---* `location` = e.g.
 ---* `{type="player", name="celeron55"}`
 ---* `{type="node", pos={x=, y=, z=}}`
 ---* `{type="detached", name="creative"}`
+
 ---* `minetest.create_detached_inventory(name, callbacks, [player_name])`: returns
 ---  an `InvRef`.
 ---* `callbacks`: See [Detached inventory callbacks]
@@ -6133,20 +6249,23 @@ function minetest.register_on_placenode(cb) end
 ---      Note that this parameter is mostly just a workaround and will be removed
 ---      in future releases.
 ---* Creates a detached inventory. If it already exists, it is cleared.
+
 ---* `minetest.remove_detached_inventory(name)`
 ---* Returns a `boolean` indicating whether the removal succeeded.
+
 ---* `minetest.do_item_eat(hp_change, replace_with_item, itemstack, user, pointed_thing)`:
 ---  returns leftover ItemStack or nil to indicate no inventory change
 ---* See `minetest.item_eat` and `minetest.register_on_item_eat`
----
+
 ---Formspec
 -----------
----
+
 ---* `minetest.show_formspec(playername, formname, formspec)`
 ---* `playername`: name of player to show formspec
 ---* `formname`: name passed to `on_player_receive_fields` callbacks.
 ---      It should follow the `"modname:<whatever>"` naming convention
 ---* `formspec`: formspec to display
+
 ---* `minetest.close_formspec(playername, formname)`
 ---* `playername`: name of player to close formspec
 ---* `formname`: has to exactly match the one given in `show_formspec`, or the
@@ -6156,75 +6275,92 @@ function minetest.register_on_placenode(cb) end
 ---* to close a formspec regardless of the formname, call
 ---      `minetest.close_formspec(playername, "")`.
 ---      **USE THIS ONLY WHEN ABSOLUTELY NECESSARY!**
+
 ---* `minetest.formspec_escape(string)`: returns a string
 ---* escapes the characters "[", "]", "\", "," and ";", which cannot be used
 ---      in formspecs.
+
 ---* `minetest.explode_table_event(string)`: returns a table
 ---* returns e.g. `{type="CHG", row=1, column=2}`
 ---* `type` is one of:
 ---        * `"INV"`: no row selected
 ---        * `"CHG"`: selected
 ---        * `"DCL"`: double-click
+
 ---* `minetest.explode_textlist_event(string)`: returns a table
 ---* returns e.g. `{type="CHG", index=1}`
 ---* `type` is one of:
 ---        * `"INV"`: no row selected
 ---        * `"CHG"`: selected
 ---        * `"DCL"`: double-click
+
 ---* `minetest.explode_scrollbar_event(string)`: returns a table
 ---* returns e.g. `{type="CHG", value=500}`
 ---* `type` is one of:
 ---        * `"INV"`: something failed
 ---        * `"CHG"`: has been changed
 ---        * `"VAL"`: not changed
----
+
 ---Item handling
 ----------------
----
+
 ---* `minetest.inventorycube(img1, img2, img3)`
 ---* Returns a string for making an image of a cube (useful as an item image)
+
 ---* `minetest.get_pointed_thing_position(pointed_thing, above)`
 ---* Returns the position of a `pointed_thing` or `nil` if the `pointed_thing`
 ---      does not refer to a node or entity.
 ---* If the optional `above` parameter is true and the `pointed_thing` refers
 ---      to a node, then it will return the `above` position of the `pointed_thing`.
+
 ---* `minetest.dir_to_facedir(dir, is6d)`
 ---* Convert a vector to a facedir value, used in `param2` for
 ---      `paramtype2="facedir"`.
 ---* passing something non-`nil`/`false` for the optional second parameter
 ---      causes it to take the y component into account.
+
 ---* `minetest.facedir_to_dir(facedir)`
 ---* Convert a facedir back into a vector aimed directly out the "back" of a
 ---      node.
+
 ---* `minetest.dir_to_fourdir(dir)`
 ---* Convert a vector to a 4dir value, used in `param2` for
 ---      `paramtype2="4dir"`.
+
 ---* `minetest.fourdir_to_dir(fourdir)`
 ---* Convert a 4dir back into a vector aimed directly out the "back" of a
 ---      node.
+
 ---* `minetest.dir_to_wallmounted(dir)`
 ---* Convert a vector to a wallmounted value, used for
 ---      `paramtype2="wallmounted"`.
+
 ---* `minetest.wallmounted_to_dir(wallmounted)`
 ---* Convert a wallmounted value back into a vector aimed directly out the
 ---      "back" of a node.
+
 ---* `minetest.dir_to_yaw(dir)`
 ---* Convert a vector into a yaw (angle)
+
 ---* `minetest.yaw_to_dir(yaw)`
 ---* Convert yaw (angle) to a vector
+
 ---* `minetest.is_colored_paramtype(ptype)`
 ---* Returns a boolean. Returns `true` if the given `paramtype2` contains
 ---      color information (`color`, `colorwallmounted`, `colorfacedir`, etc.).
+
 ---* `minetest.strip_param2_color(param2, paramtype2)`
 ---* Removes everything but the color information from the
 ---      given `param2` value.
 ---* Returns `nil` if the given `paramtype2` does not contain color
 ---      information.
+
 ---* `minetest.get_node_drops(node, toolname)`
 ---* Returns list of itemstrings that are dropped by `node` when dug
 ---      with the item `toolname` (not limited to tools).
 ---* `node`: node as table or node name
 ---* `toolname`: name of the item used to dig (can be `nil`)
+
 ---* `minetest.get_craft_result(input)`: returns `output, decremented_input`
 ---* `input.method` = `"normal"` or `"cooking"` or `"fuel"`
 ---* `input.width` = for example `3`
@@ -6236,6 +6372,7 @@ function minetest.register_on_placenode(cb) end
 ---      placed in `decremented_input.items`. Replacements can be placed in
 ---      `decremented_input` if the stack of the replaced item has a count of 1.
 ---* `decremented_input` = like `input`
+
 ---* `minetest.get_craft_recipe(output)`: returns input
 ---* returns last registered recipe for output item (node)
 ---* `output` is a node or item type such as `"default:torch"`
@@ -6244,6 +6381,7 @@ function minetest.register_on_placenode(cb) end
 ---* `input.items` = for example
 ---      `{stack1, stack2, stack3, stack4, stack 5, stack 6, stack 7, stack 8, stack 9}`
 ---        * `input.items` = `nil` if no recipe found
+
 ---* `minetest.get_all_craft_recipes(query item)`: returns a table or `nil`
 ---* returns indexed table with all registered recipes for query item (node)
 ---      or `nil` if no recipe was found.
@@ -6265,12 +6403,14 @@ function minetest.register_on_placenode(cb) end
 ---              }
 ---          }
 ---
+
 ---* `minetest.handle_node_drops(pos, drops, digger)`
 ---* `drops`: list of itemstrings
 ---* Handles drops from nodes after digging: Default action is to put them
 ---      into digger's inventory.
 ---* Can be overridden to get different functionality (e.g. dropping items on
 ---      ground)
+
 ---* `minetest.itemstring_with_palette(item, palette_index)`: returns an item
 ---  string.
 ---* Creates an item string which contains palette index information
@@ -6279,6 +6419,7 @@ function minetest.register_on_placenode(cb) end
 ---* `item`: the item stack which becomes colored. Can be in string,
 ---      table and native form.
 ---* `palette_index`: this index is added to the item stack
+
 ---* `minetest.itemstring_with_color(item, colorstring)`: returns an item string
 ---* Creates an item string which contains static color information
 ---      for hardware colorization. Use this method if you wish to colorize
@@ -6287,22 +6428,23 @@ function minetest.register_on_placenode(cb) end
 ---* `item`: the item stack which becomes colored. Can be in string,
 ---      table and native form.
 ---* `colorstring`: the new color of the item stack
----
+
 ---Rollback
 -----------
----
+
 ---* `minetest.rollback_get_node_actions(pos, range, seconds, limit)`:
 ---  returns `{{actor, pos, time, oldnode, newnode}, ...}`
 ---* Find who has done something to a node, or near a node
 ---* `actor`: `"player:<name>"`, also `"liquid"`.
+
 ---* `minetest.rollback_revert_actions_by(actor, seconds)`: returns
 ---  `boolean, log_messages`.
 ---* Revert latest actions of someone
 ---* `actor`: `"player:<name>"`, also `"liquid"`.
----
+
 ---Defaults for the `on_place` and `on_drop` item definition functions
 ----------------------------------------------------------------------
----
+
 ---* `minetest.item_place_node(itemstack, placer, pointed_thing[, param2, prevent_after_place])`
 ---* Place item as a node
 ---* `param2` overrides `facedir` and wallmounted `param2`
@@ -6310,10 +6452,12 @@ function minetest.register_on_placenode(cb) end
 ---      for the newly placed node to prevent a callback and placement loop
 ---* returns `itemstack, position`
 ---      * `position`: the location the node was placed to. `nil` if nothing was placed.
+
 ---* `minetest.item_place_object(itemstack, placer, pointed_thing)`
 ---* Place item as-is
 ---* returns the leftover itemstack
 ---* **Note**: This function is deprecated and will never be called.
+
 ---* `minetest.item_place(itemstack, placer, pointed_thing[, param2])`
 ---* Wrapper that calls `minetest.item_place_node` if appropriate
 ---* Calls `on_rightclick` of `pointed_thing.under` if defined instead
@@ -6321,43 +6465,47 @@ function minetest.register_on_placenode(cb) end
 ---* `param2` overrides facedir and wallmounted `param2`
 ---* returns `itemstack, position`
 ---      * `position`: the location the node was placed to. `nil` if nothing was placed.
+
 ---* `minetest.item_pickup(itemstack, picker, pointed_thing, time_from_last_punch, ...)`
 ---* Runs callbacks registered by `minetest.register_on_item_pickup` and adds
 ---      the item to the picker's `"main"` inventory list.
 ---* Parameters are the same as in `on_pickup`.
 ---* Returns the leftover itemstack.
+
 ---* `minetest.item_drop(itemstack, dropper, pos)`
 ---* Drop the item
 ---* returns the leftover itemstack
+
 ---* `minetest.item_eat(hp_change[, replace_with_item])`
 ---* Returns `function(itemstack, user, pointed_thing)` as a
 ---      function wrapper for `minetest.do_item_eat`.
 ---* `replace_with_item` is the itemstring which is added to the inventory.
 ---      If the player is eating a stack, then replace_with_item goes to a
 ---      different spot.
----
+
 ---Defaults for the `on_punch` and `on_dig` node definition callbacks
 ---------------------------------------------------------------------
----
+
 ---* `minetest.node_punch(pos, node, puncher, pointed_thing)`
 ---* Calls functions registered by `minetest.register_on_punchnode()`
+
 ---* `minetest.node_dig(pos, node, digger)`
 ---* Checks if node can be dug, puts item into inventory, removes node
 ---* Calls functions registered by `minetest.registered_on_dignodes()`
----
+
 ---Timing
 ---------
----
+
 ---* `minetest.after(time, func, ...)`: returns job table to use as below.
 ---* Call the function `func` after `time` seconds, may be fractional
 ---* Optional: Variable number of arguments that are passed to `func`
 ---
 ---* `job:cancel()`
 ---* Cancels the job function from being called
----
+
 ---Async environment
 --------------------
----
+
 ---The engine allows you to submit jobs to be ran in an isolated environment
 ---concurrently with normal server operation.
 ---A job consists of a function to be ran in the async environment, any amount of
@@ -6371,7 +6519,7 @@ function minetest.register_on_placenode(cb) end
 ---Arguments and return values passed through this can contain certain userdata
 ---objects that will be seamlessly copied (not shared) to the async environment.
 ---This allows you easy interoperability for delegating work to jobs.
----
+
 ---* `minetest.handle_async(func, callback, ...)`:
 ---* Queue the function `func` to be ran in an async environment.
 ---      Note that there are multiple persistent workers and any of them may
@@ -6380,13 +6528,14 @@ function minetest.register_on_placenode(cb) end
 ---* When `func` returns the callback is called (in the normal environment)
 ---      with all of the return values as arguments.
 ---* Optional: Variable number of arguments that are passed to `func`
+
 ---* `minetest.register_async_dofile(path)`:
 ---* Register a path to a Lua file to be imported when an async environment
 ---      is initialized. You can use this to preload code which you can then call
 ---      later using `minetest.handle_async()`.
----
+
 ---### List of APIs available in an async environment
----
+
 ---Classes:
 ---* `ItemStack`
 ---* `PerlinNoise`
@@ -6408,25 +6557,28 @@ function minetest.register_on_placenode(cb) end
 ---Functions:
 ---* Standalone helpers such as logging, filesystem, encoding,
 ---  hashing or compression APIs
+
 ---* `minetest.request_insecure_environment` (same restrictions apply)
----
+
 ---Variables:
 ---* `minetest.settings`
 ---* `minetest.registered_items`, `registered_nodes`, `registered_tools`,
 ---  `registered_craftitems` and `registered_aliases`
 ---* with all functions and userdata values replaced by `true`, calling any
 ---      callbacks here is obviously not possible
----
+
 ---Server
 ---------
----
+
 ---* `minetest.request_shutdown([message],[reconnect],[delay])`: request for
 ---  server shutdown. Will display `message` to clients.
 ---* `reconnect` == true displays a reconnect button
 ---* `delay` adds an optional delay (in seconds) before shutdown.
 ---      Negative delay cancels the current active shutdown.
 ---      Zero delay triggers an immediate shutdown.
+
 ---* `minetest.cancel_shutdown_requests()`: cancel current delayed shutdown
+
 ---* `minetest.get_server_status(name, joined)`
 ---* Returns the server status string when a player joins or when the command
 ---      `/status` is called. Returns `nil` or an empty string when the message is
@@ -6434,17 +6586,22 @@ function minetest.register_on_placenode(cb) end
 ---* `joined`: Boolean value, indicates whether the function was called when
 ---      a player joined.
 ---* This function may be overwritten by mods to customize the status message.
+
 ---* `minetest.get_server_uptime()`: returns the server uptime in seconds
+
 ---* `minetest.get_server_max_lag()`: returns the current maximum lag
 ---  of the server in seconds or nil if server is not fully loaded yet
+
 ---* `minetest.remove_player(name)`: remove player from database (if they are not
 ---  connected).
 ---* As auth data is not removed, minetest.player_exists will continue to
 ---      return true. Call the below method as well if you want to remove auth
 ---      data too.
 ---* Returns a code (0: successful, 1: no such player, 2: player is connected)
+
 ---* `minetest.remove_player_auth(name)`: remove player authentication data
 ---* Returns boolean indicating success (false if player nonexistent)
+
 ---* `minetest.dynamic_add_media(options, callback)`
 ---* `options`: table containing the following parameters
 ---        * `filepath`: path to a media file on the filesystem
@@ -6472,32 +6629,38 @@ function minetest.register_on_placenode(cb) end
 ---* Clients will attempt to fetch files added this way via remote media,
 ---      this can make transfer of bigger files painless (if set up). Nevertheless
 ---      it is advised not to use dynamic media for big media files.
----
+
 ---Bans
 -------
----
+
 ---* `minetest.get_ban_list()`: returns a list of all bans formatted as string
+
 ---* `minetest.get_ban_description(ip_or_name)`: returns list of bans matching
 ---  IP address or name formatted as string
+
 ---* `minetest.ban_player(name)`: ban the IP of a currently connected player
 ---* Returns boolean indicating success
+
 ---* `minetest.unban_player_or_ip(ip_or_name)`: remove ban record matching
 ---  IP address or name
+
 ---* `minetest.kick_player(name, [reason])`: disconnect a player with an optional
 ---  reason.
 ---* Returns boolean indicating success (false if player nonexistent)
+
 ---* `minetest.disconnect_player(name, [reason])`: disconnect a player with an
 ---  optional reason, this will not prefix with 'Kicked: ' like kick_player.
 ---  If no reason is given, it will default to 'Disconnected.'
 ---* Returns boolean indicating success (false if player nonexistent)
----
+
 ---Particles
 ------------
----
+
 ---* `minetest.add_particle(particle definition)`
 ---* Deprecated: `minetest.add_particle(pos, velocity, acceleration,
 ---      expirationtime, size, collisiondetection, texture, playername)`
 ---
+
 ---* `minetest.add_particlespawner(particlespawner definition)`
 ---* Add a `ParticleSpawner`, an object that spawns an amount of particles
 ---      over `time` seconds.
@@ -6510,15 +6673,16 @@ function minetest.register_on_placenode(cb) end
 ---      minsize, maxsize,
 ---      collisiondetection, texture, playername)`
 ---
+
 ---* `minetest.delete_particlespawner(id, player)`
 ---* Delete `ParticleSpawner` with `id` (return value from
 ---      `minetest.add_particlespawner`).
 ---* If playername is specified, only deletes on the player's client,
 ---      otherwise on all clients.
----
+
 ---Schematics
 -------------
----
+
 ---* `minetest.create_schematic(p1, p2, probability_list, filename, slice_prob_list)`
 ---* Create a schematic from the volume of map specified by the box formed by
 ---      p1 and p2.
@@ -6547,7 +6711,7 @@ function minetest.register_on_placenode(cb) end
 ---            * If slice probability list equals `nil`, no slice probabilities
 ---              are applied.
 ---* Saves schematic in the Minetest Schematic format to filename.
----
+
 ---* `minetest.place_schematic(pos, schematic, rotation, replacements, force_placement, flags)`
 ---* Place the schematic specified by schematic (see [Schematic specifier]) at
 ---      `pos`.
@@ -6566,7 +6730,7 @@ function minetest.register_on_placenode(cb) end
 ---        * place_center_x
 ---        * place_center_y
 ---        * place_center_z
----
+
 ---* `minetest.place_schematic_on_vmanip(vmanip, pos, schematic, rotation, replacement, force_placement, ---flags)`:
 ---* This function is analogous to minetest.place_schematic, but places a
 ---      schematic onto the specified VoxelManip object `vmanip` instead of the
@@ -6581,7 +6745,7 @@ function minetest.register_on_placenode(cb) end
 ---        * place_center_x
 ---        * place_center_y
 ---        * place_center_z
----
+
 ---* `minetest.serialize_schematic(schematic, format, options)`
 ---* Return the serialized schematic specified by schematic
 ---      (see [Schematic specifier])
@@ -6597,7 +6761,7 @@ function minetest.register_on_placenode(cb) end
 ---        * If `lua_num_indent_spaces` is a nonzero number and `format` is "lua",
 ---          the Lua code generated will use that number of spaces as indentation
 ---          instead of a tab character.
----
+
 ---* `minetest.read_schematic(schematic, options)`
 ---* Returns a Lua table representing the schematic (see: [Schematic specifier])
 ---* `schematic` is the schematic to read (see: [Schematic specifier])
@@ -6609,10 +6773,10 @@ function minetest.register_on_placenode(cb) end
 ---            * `all`: write all probabilities to the `write_yslice_prob` table.
 ---            * The default for this option is `all`.
 ---            * Any invalid value will be interpreted as `all`.
----
+
 ---HTTP Requests
 ----------------
----
+
 ---* `minetest.request_http_api()`:
 ---* returns `HTTPApiTable` containing http functions if the calling mod has
 ---      been granted access by being listed in the `secure.http_mods` or
@@ -6633,25 +6797,29 @@ function minetest.register_on_placenode(cb) end
 ---      `HTTPApiTable.fetch_async_get`
 ---* `HTTPApiTable.fetch_async_get(handle)`: returns HTTPRequestResult
 ---* Return response data for given asynchronous HTTP request
----
+
 ---Storage API
 --------------
----
+
 ---* `minetest.get_mod_storage()`:
 ---* returns reference to mod private `StorageRef`
 ---* must be called during mod load time
----
+
 ---Misc.
 --------
----
+
 ---* `minetest.get_connected_players()`: returns list of `ObjectRefs`
+
 ---* `minetest.is_player(obj)`: boolean, whether `obj` is a player
+
 ---* `minetest.player_exists(name)`: boolean, whether player exists
 ---  (regardless of online status)
+
 ---* `minetest.hud_replace_builtin(name, hud_definition)`
 ---* Replaces definition of a builtin hud element
 ---* `name`: `"breath"` or `"health"`
 ---* `hud_definition`: definition to replace builtin definition
+
 ---* `minetest.parse_relative_number(arg, relative_to)`: returns number or nil
 ---* Helper function for chat commands.
 ---* For parsing an optionally relative number of a chat command
@@ -6666,33 +6834,44 @@ function minetest.register_on_placenode(cb) end
 ---        * `minetest.parse_relative_number("5", 10)` returns 5
 ---        * `minetest.parse_relative_number("~5", 10)` returns 15
 ---        * `minetest.parse_relative_number("~", 10)` returns 10
+
 ---* `minetest.send_join_message(player_name)`
 ---* This function can be overridden by mods to change the join message.
+
 ---* `minetest.send_leave_message(player_name, timed_out)`
 ---* This function can be overridden by mods to change the leave message.
+
 ---* `minetest.hash_node_position(pos)`: returns a 48-bit integer
 ---* `pos`: table {x=number, y=number, z=number},
 ---* Gives a unique hash number for a node position (16+16+16=48bit)
+
 ---* `minetest.get_position_from_hash(hash)`: returns a position
 ---* Inverse transform of `minetest.hash_node_position`
+
 ---* `minetest.get_item_group(name, group)`: returns a rating
 ---* Get rating of a group of an item. (`0` means: not in group)
+
 ---* `minetest.get_node_group(name, group)`: returns a rating
 ---* Deprecated: An alias for the former.
+
 ---* `minetest.raillike_group(name)`: returns a rating
 ---* Returns rating of the connect_to_raillike group corresponding to name
 ---* If name is not yet the name of a connect_to_raillike group, a new group
 ---      id is created, with that name.
+
 ---* `minetest.get_content_id(name)`: returns an integer
 ---* Gets the internal content ID of `name`
+
 ---* `minetest.get_name_from_content_id(content_id)`: returns a string
 ---* Gets the name of the content with that content ID
+
 ---* `minetest.parse_json(string[, nullvalue])`: returns something
 ---* Convert a string containing JSON data into the Lua equivalent
 ---* `nullvalue`: returned in place of the JSON null; defaults to `nil`
 ---* On success returns a table, a string, a number, a boolean or `nullvalue`
 ---* On failure outputs an error message and returns `nil`
 ---* Example: `parse_json("[10, {\"a\":false}]")`, returns `{10, {a = false}}`
+
 ---* `minetest.write_json(data[, styled])`: returns a string or `nil` and an error
 ---  message.
 ---* Convert a Lua table into a JSON string
@@ -6707,10 +6886,12 @@ function minetest.register_on_placenode(cb) end
 ---           values.
 ---* Example: `write_json({10, {a = false}})`,
 ---      returns `'[10, {"a": false}]'`
+
 ---* `minetest.serialize(table)`: returns a string
 ---* Convert a table containing tables, strings, numbers, booleans and `nil`s
 ---      into string form readable by `minetest.deserialize`
 ---* Example: `serialize({foo="bar"})`, returns `'return { ["foo"] = "bar" }'`
+
 ---* `minetest.deserialize(string[, safe])`: returns a table
 ---* Convert a string returned by `minetest.serialize` into a table
 ---* `string` is loaded in an empty sandbox environment.
@@ -6726,6 +6907,7 @@ function minetest.register_on_placenode(cb) end
 ---* Example: `deserialize('print("foo")')`, returns `nil`
 ---      (function call fails), returns
 ---      `error:[string "print("foo")"]:1: attempt to call global 'print' (a nil value)`
+
 ---* `minetest.compress(data, method, ...)`: returns `compressed_data`
 ---* Compress a string of data.
 ---* `method` is a string identifying the compression method to be used.
@@ -6738,21 +6920,26 @@ function minetest.register_on_placenode(cb) end
 ---        * Zstandard: `level` - Compression level. Integer or `nil`. Default `3`.
 ---        Note any supported Zstandard compression level could be used here,
 ---        but these are subject to change between Zstandard versions.
+
 ---* `minetest.decompress(compressed_data, method, ...)`: returns data
 ---* Decompress a string of data using the algorithm specified by `method`.
 ---* See documentation on `minetest.compress()` for supported compression
 ---      methods.
 ---* `...` indicates method-specific arguments. Currently, no methods use this
+
 ---* `minetest.rgba(red, green, blue[, alpha])`: returns a string
 ---* Each argument is an 8 Bit unsigned integer
 ---* Returns the ColorString from rgb or rgba values
 ---* Example: `minetest.rgba(10, 20, 30, 40)`, returns `"#0A141E28"`
+
 ---* `minetest.encode_base64(string)`: returns string encoded in base64
 ---* Encodes a string in base64.
+
 ---* `minetest.decode_base64(string)`: returns string or nil on failure
 ---* Padding characters are only supported starting at version 5.4.0, where
 ---      5.5.0 and newer perform proper checks.
 ---* Decodes a string encoded in base64.
+
 ---* `minetest.is_protected(pos, name)`: returns boolean
 ---* Returning `true` restricts the player `name` from modifying (i.e. digging,
 ---       placing) the node at position `pos`.
@@ -6770,9 +6957,11 @@ function minetest.register_on_placenode(cb) end
 ---              end
 ---              return old_is_protected(pos, name)
 ---          end
+
 ---* `minetest.record_protection_violation(pos, name)`
 ---* This function calls functions registered with
 ---      `minetest.register_on_protection_violation`.
+
 ---* `minetest.is_creative_enabled(name)`: returns boolean
 ---* Returning `true` means that Creative Mode is enabled for player `name`.
 ---* `name` will be `""` for non-players or if the player is unknown.
@@ -6780,6 +6969,7 @@ function minetest.register_on_placenode(cb) end
 ---      implement a per-player Creative Mode.
 ---* By default, this function returns `true` if the setting
 ---      `creative_mode` is `true` and `false` otherwise.
+
 ---* `minetest.is_area_protected(pos1, pos2, player_name, interval)`
 ---* Returns the position of the first node that `player_name` may not modify
 ---      in the specified cuboid between `pos1` and `pos2`.
@@ -6794,6 +6984,7 @@ function minetest.register_on_placenode(cb) end
 ---* Like `minetest.is_protected`, this function may be extended or
 ---      overwritten by mods to provide a faster implementation to check the
 ---      cuboid for intersections.
+
 ---* `minetest.rotate_and_place(itemstack, placer, pointed_thing[, infinitestacks,
 ---  orient_flags, prevent_after_place])`
 ---* Attempt to predict the desired orientation of the facedir-capable node
@@ -6813,11 +7004,13 @@ function minetest.register_on_placenode(cb) end
 ---          takes precedence over the first.
 ---* `prevent_after_place` is directly passed to `minetest.item_place_node`
 ---* Returns the new itemstack after placement
+
 ---* `minetest.rotate_node(itemstack, placer, pointed_thing)`
 ---* calls `rotate_and_place()` with `infinitestacks` set according to the state
 ---      of the creative mode setting, checks for "sneak" to set the `invert_wall`
 ---      parameter and `prevent_after_place` set to `true`.
 ---
+
 ---* `minetest.calculate_knockback(player, hitter, time_from_last_punch,
 ---  tool_capabilities, dir, distance, damage)`
 ---* Returns the amount of knockback applied on the punched player.
@@ -6838,11 +7031,13 @@ function minetest.register_on_placenode(cb) end
 ---      absent, the limit is the value of the setting `"max_forceloaded_blocks"`.
 ---      If the call would put the number of blocks over the limit, the call fails.
 ---
+
 ---* `minetest.forceload_free_block(pos[, transient])`
 ---* stops forceloading the position `pos`
 ---* If `transient` is `false` or absent, frees a persistent forceload.
 ---      If `true`, frees a transient forceload.
 ---
+
 ---* `minetest.compare_block_status(pos, condition)`
 ---* Checks whether the mapblock at position `pos` is in the wanted condition.
 ---* `condition` may be one of the following values:
@@ -6856,6 +7051,7 @@ function minetest.register_on_placenode(cb) end
 ---        * `true`: Mapblock meets the requirement
 ---        * `nil`: Unsupported `condition` value
 ---
+
 ---* `minetest.request_insecure_environment()`: returns an environment containing
 ---  insecure functions if the calling mod has been listed as trusted in the
 ---  `secure.trusted_mods` setting or security is disabled, otherwise returns
@@ -6864,95 +7060,106 @@ function minetest.register_on_placenode(cb) end
 ---      (ie: the init.lua of the mod, not from another Lua file or within a function).
 ---* **DO NOT ALLOW ANY OTHER MODS TO ACCESS THE RETURNED ENVIRONMENT, STORE
 ---      IT IN A LOCAL VARIABLE!**
----
+
 ---* `minetest.global_exists(name)`
 ---* Checks if a global variable has been set, without triggering a warning.
----
+
 ---Global objects
 -----------------
----
+
 ---* `minetest.env`: `EnvRef` of the server environment and world.
 ---* Any function in the minetest namespace can be called using the syntax
 ---      `minetest.env:somefunction(somearguments)`
 ---      instead of `minetest.somefunction(somearguments)`
 ---* Deprecated, but support is not to be dropped soon
----
+
 ---Global tables
 ----------------
----
+
 ---### Registered definition tables
----
+
 ---* `minetest.registered_items`
 ---* Map of registered items, indexed by name
+
 ---* `minetest.registered_nodes`
 ---* Map of registered node definitions, indexed by name
+
 ---* `minetest.registered_craftitems`
 ---* Map of registered craft item definitions, indexed by name
+
 ---* `minetest.registered_tools`
 ---* Map of registered tool definitions, indexed by name
+
 ---* `minetest.registered_entities`
 ---* Map of registered entity prototypes, indexed by name
 ---* Values in this table may be modified directly.
 ---      Note: changes to initial properties will only affect entities spawned afterwards,
 ---      as they are only read when spawning.
+
 ---* `minetest.object_refs`
 ---* Map of object references, indexed by active object id
+
 ---* `minetest.luaentities`
 ---* Map of Lua entities, indexed by active object id
+
 ---* `minetest.registered_abms`
 ---* List of ABM definitions
+
 ---* `minetest.registered_lbms`
 ---* List of LBM definitions
+
 ---* `minetest.registered_aliases`
 ---* Map of registered aliases, indexed by name
+
 ---* `minetest.registered_ores`
 ---* Map of registered ore definitions, indexed by the `name` field.
 ---* If `name` is nil, the key is the object handle returned by
 ---      `minetest.register_ore`.
+
 ---* `minetest.registered_biomes`
 ---* Map of registered biome definitions, indexed by the `name` field.
 ---* If `name` is nil, the key is the object handle returned by
 ---      `minetest.register_biome`.
+
 ---* `minetest.registered_decorations`
 ---* Map of registered decoration definitions, indexed by the `name` field.
 ---* If `name` is nil, the key is the object handle returned by
 ---      `minetest.register_decoration`.
+
 ---* `minetest.registered_schematics`
 ---* Map of registered schematic definitions, indexed by the `name` field.
 ---* If `name` is nil, the key is the object handle returned by
 ---      `minetest.register_schematic`.
+
 ---* `minetest.registered_chatcommands`
 ---* Map of registered chat command definitions, indexed by name
+
 ---* `minetest.registered_privileges`
 ---* Map of registered privilege definitions, indexed by name
 ---* Registered privileges can be modified directly in this table.
----
+
 ---### Registered callback tables
----
+
 ---All callbacks registered with [Global callback registration functions] are added
 ---to corresponding `minetest.registered_*` tables.
----
----
----
----
+
 ---Class reference
 ---===============
----
+
 ---Sorted alphabetically.
----
+
 ---`AreaStore`
 --------------
----
+
 ---AreaStore is a data structure to calculate intersections of 3D cuboid volumes
 ---and points. The `data` field (string) may be used to store and retrieve any
 ---mod-relevant information to the specified area.
----
+
 ---Despite its name, mods must take care of persisting AreaStore data. They may
 ---use the provided load and write functions for this.
----
----
+
 ---### Methods
----
+
 ---* `AreaStore(type_name)`
 ---* Returns a new AreaStore instance
 ---* `type_name`: optional, forces the internally used API.

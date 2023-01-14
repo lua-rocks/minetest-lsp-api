@@ -1,4 +1,4 @@
-# Minetest Game LSP API (WIP)
+# Minetest 5.6.1 LSP API (WIP)
 
 The [LSP API] not only makes development much more pleasant but also helps to
 detect serious bugs, so I hope that when everything is ready, it will become the
@@ -6,9 +6,8 @@ standard for Minetest devs and modders.
 
 ## Usage
 
-Move API definitions from this repository to your minetest game project and
-enjoy smart tooltips in a text editor [that supports the LSP]. I personally use
-[VSCodium].
+Put `lua_api.lua` into your minetest game project and enjoy smart tooltips in a
+text editor [that supports the LSP]. I personally use [VSCodium].
 
 ## Goals
 
