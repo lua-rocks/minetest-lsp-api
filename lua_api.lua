@@ -5469,20 +5469,10 @@ function minetest.register_on_mods_loaded(cb) end
 ---@param cb function
 function minetest.register_on_shutdown(cb) end
 
----@class mt.OnPlaceNodeCallBack
----@param pos mt.Vector
----@param newnode mt.Node
----@param placer mt.ObjectRef|nil
----@param oldnode mt.Node
----@param itemstack mt.ItemStack
----@param thing mt.PointedThing
----@return boolean|nil taken If return `true` no item is taken from `itemstack`.
-local function cb(pos, newnode, placer, oldnode, itemstack, thing) end
-
 ---* Called when a node has been placed.
 ---* **Not recommended**; use `on_construct` or `after_place_node` in node
 ---  definition whenever possible.
----@param cb mt.OnPlaceNodeCallBack
+---@param cb fun(pos:mt.Vector, newnode:mt.Node, placer:mt.ObjectRef|nil, oldnode:mt.Node, itemstack:mt.ItemStack, pointed_thing:mt.PointedThing): boolean|nil If return `true` no item is taken from `itemstack`.
 function minetest.register_on_placenode(cb) end
 
 ---* Called when a node has been dug.
@@ -5492,8 +5482,9 @@ function minetest.register_on_placenode(cb) end
 ---@param cb fun(pos: mt.Vector, oldnode: mt.Node, digger: mt.ObjectRef|nil)
 function minetest.register_on_dignode(cb) end
 
----* `minetest.register_on_punchnode(function(pos, node, puncher, pointed_thing))`
 ---* Called when a node is punched
+---@param cb fun(pos:mt.Vector, node:mt.Node, puncher:mt.ObjectRef, pointed_thing:mt.PointedThing)
+function minetest.register_on_punchnode(cb) end
 
 ---* `minetest.register_on_generated(function(minp, maxp, blockseed))`
 ---* Called after generating a piece of world. Modifying nodes inside the area
