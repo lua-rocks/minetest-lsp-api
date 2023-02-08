@@ -1,5 +1,8 @@
 # Minetest 5.6.1 LSP API (WIP)
 
+RECENTLY, I DECIDED TO JOIN MY EFFORTS ON THIS PROJECT WITH OTHER PEOPLE,
+SO LOOK FOR A NEW REPOSITORY [HERE](https://github.com/orgs/minetest-toolkit/repositories).
+
 The [LSP API] not only makes development much more pleasant but also helps to
 detect serious bugs, so I hope that when everything is ready, it will become the
 standard for Minetest devs and modders.

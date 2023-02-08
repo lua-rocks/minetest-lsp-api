@@ -3276,9 +3276,6 @@ function ItemStackMetaRef:set_tool_capabilities(tool_capabilities) end
 -- | list    |            |         | Spacing is now 0.25 for both directions, meaning lists will be taller in height
 -- | label   | 0, +0.3    |         | The first line of text is now positioned centered exactly at the position specified
 
----@type mt.FormSpec
-local test = "checkbox[<X>,<Y>;<name>;<label>;<selected>]"
-
 ---Inventory
 ---=========
 ---
